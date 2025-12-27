@@ -57,18 +57,27 @@ def upload_file():
         logging.error(f"Error processing file: {str(e)}")
         return jsonify({'error': f'Error processing file: {str(e)}'}), 500
 
+from app import app, db, Feedback
+
 @app.route('/feedback', methods=['POST'])
 def submit_feedback():
     data = request.get_json()
     feedback_text = data.get('feedback', '').strip()
+    case_number = data.get('case_id', '').strip() # Assuming case_id might be sent
     
     if not feedback_text:
         return jsonify({'error': 'Feedback cannot be empty'}), 400
     
+    # Save to Database
+    try:
+        new_feedback = Feedback(case_number=case_number, feedback_text=feedback_text)
+        db.session.add(new_feedback)
+        db.session.commit()
+    except Exception as e:
+        logging.error(f"Failed to save feedback to database: {str(e)}")
+    
     ist = pytz.timezone('Asia/Kolkata')
     timestamp = datetime.now(ist).strftime('%Y-%m-%d %H:%M:%S IST')
-    
-    feedback_entry = f"\n--- Feedback submitted on {timestamp} ---\n{feedback_text}\n"
     
     email_sent = False
     try:
@@ -95,13 +104,5 @@ def submit_feedback():
             email_sent = True
     except Exception as e:
         logging.warning(f"Email sending failed: {str(e)}")
-    
-    try:
-        with open('feedback.txt', 'a', encoding='utf-8') as f:
-            f.write(feedback_entry)
-    except Exception as e:
-        logging.error(f"Failed to write feedback to file: {str(e)}")
-        if not email_sent:
-            return jsonify({'error': 'Failed to submit feedback'}), 500
     
     return jsonify({'success': True, 'message': 'Thank you for your feedback!'})
