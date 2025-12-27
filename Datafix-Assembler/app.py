@@ -25,6 +25,9 @@ class Feedback(db.Model):
     feedback_text = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
 
+    def __init__(self, **kwargs):
+        super(Feedback, self).__init__(**kwargs)
+
 # Create tables
 with app.app_context():
     db.create_all()
