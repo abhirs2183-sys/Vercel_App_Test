@@ -28,6 +28,15 @@ class Feedback(db.Model):
     def __init__(self, **kwargs):
         super(Feedback, self).__init__(**kwargs)
 
+class UsageLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    created_by = db.Column(db.String(100), nullable=False)
+    case_id = db.Column(db.String(50), nullable=False)
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    def __init__(self, **kwargs):
+        super(UsageLog, self).__init__(**kwargs)
+
 # Create tables
 with app.app_context():
     db.create_all()

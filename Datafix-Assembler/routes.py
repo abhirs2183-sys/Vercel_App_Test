@@ -3,17 +3,22 @@ import logging
 from datetime import datetime
 import pytz
 from flask import render_template, request, jsonify, send_file
-from app import app
-from sql_processor import process_pkg_file
-
+from app import app, db, Feedback, UsageLog
 
 def log_user_activity(created_by, case_id):
-    """Log user activity to User_Logs.txt"""
+    """Log user activity to Database and User_Logs.txt"""
+    # Database Log
+    try:
+        new_log = UsageLog(created_by=created_by, case_id=case_id)
+        db.session.add(new_log)
+        db.session.commit()
+    except Exception as e:
+        logging.error(f"Failed to save usage log to database: {str(e)}")
+
+    # File Log fallback
     ist = pytz.timezone('Asia/Kolkata')
     timestamp = datetime.now(ist).strftime('%Y-%m-%d %H:%M:%S IST')
-    
     log_entry = f"Created by: {created_by} | Case#: {case_id} | Timestamp: {timestamp}\n"
-    
     try:
         with open('User_Logs.txt', 'a', encoding='utf-8') as f:
             f.write(log_entry)
