@@ -1,0 +1,36 @@
+Created By        : Shivani Magar
+Case#             : 17459884
+Client Pin: 100031072
+Client Name: Welltower OP LLC
+Database: 25167901_112125 dOY5YGqWCKPeNtZI    PCZ001DB97  vuvorjczo_live_112125
+
+delete from gldetail where htran = 600213883
+delete from detail where hinvorrec = 600213883
+delete from gldetail where hdetail in (39170694, 39170696)
+delete from detail where hmy in (39170694, 39170696)
+update detail set hchkorchg = NULL where hmy = 39170695
+delete from trans where hmy = 600213883
+
+update trans set bopen = -1 where hmy = 600213726
+
+delete from gldetail where hdetail in (15562156, 15562153, 15562152)
+delete from detail where hmy in (15562156, 15562153, 15562152)
+update detail set hchkorchg = NULL where hmy = 14761191
+
+update trans set bopen = -1 where hmy = 600042500
+
+update trans set bopen = -1, samountpaid = 0, hparent1 = 0 where hmy in (700098999, 700708297, 700708298, 700708299, 700714135, 700714136, 700714137)
+update trans set bopen = -1, samountpaid = (select sum(samount) from detail where hchkorchg = 700104715) where hmy = 700104715
+
+exec Yardi_Rebuild_Receipt 600213726
+exec Yardi_Rebuild_Receipt 600050120
+exec Yardi_Rebuild_Receipt 600042500
+
+exec Yardi_Rebuild_Charge 700098999
+exec Yardi_Rebuild_Charge 700708297
+exec Yardi_Rebuild_Charge 700708298
+exec Yardi_Rebuild_Charge 700708299
+exec Yardi_Rebuild_Charge 700714135
+exec Yardi_Rebuild_Charge 700714136
+exec Yardi_Rebuild_Charge 700714137
+exec Yardi_Rebuild_Charge 700104715

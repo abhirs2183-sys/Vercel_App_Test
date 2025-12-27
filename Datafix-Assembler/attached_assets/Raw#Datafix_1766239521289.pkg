@@ -1,0 +1,10 @@
+Created By: Giriraj parik
+Case#: 12345678
+Client Pin: 1234567890
+Client Name: ABC Properties LLC
+Database: 25510319_121825	8tPiPsVcN4dYCz55	PCZ001DB001	abc_live_121825	
+
+delete from detail where hmy = 1
+update trans set stotalamount = 100 where hmy = 600000001
+
+exec Yardi_rebuild_receipt 600000001

@@ -1,0 +1,45 @@
+Created By   : Giriraj Parik
+Case#        : 17507129
+Client Pin   : 100035482
+Client Name  : Kessinger/Hunter & Company LC
+Database    : 25196948_112425 LWZ7po9YqqZdckJT PCZ001DB222 ufdsumtcf_live_112425
+
+
+UPDATE T
+SET T.iLateType = (
+		CASE 
+			WHEN T.iLateType = 50
+				THEN 0
+			WHEN T.iLateType = 51
+				THEN 1
+			WHEN T.iLateType = 52
+				THEN 2
+			WHEN T.iLateType = 53
+				THEN 3
+			END
+		)
+	,T.iLateType2 = (
+		CASE 
+			WHEN T.iLateType2 = 50
+				THEN 0
+			WHEN T.iLateType2 = 51
+				THEN 1
+			WHEN T.iLateType2 = 52
+				THEN 2
+			WHEN T.iLateType2 = 53
+				THEN 3
+			END
+		)
+FROM TENANT T
+INNER JOIN PROPERTY P ON T.HPROPERTY = P.HMY
+INNER JOIN CommPropConfig CPC ON CPC.hProperty = p.HMY
+INNER JOIN Country_info ci ON p.HCOUNTRY = ci.HMY
+WHERE CPC.iLateFeePreference = 0
+	AND T.iLateType IS NOT NULL
+	AND ISNULL(p.hLegalEntity, 0) = 0
+	AND T.iLateType IN (
+		50
+		,51
+		,52
+		,53
+		)

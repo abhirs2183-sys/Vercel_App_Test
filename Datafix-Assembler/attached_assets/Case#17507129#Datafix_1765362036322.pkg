@@ -1,0 +1,87 @@
+//Notes
+Client Pin   : 100035482
+Client Name  : Kessinger/Hunter & Company LC
+User Name    : 25196948_112425
+Password     : LWZ7po9YqqZdckJT
+DB Server    : PCZ001DB222
+Instance     : PCZ001DB222
+DB Name      : ufdsumtcf_live_112425
+
+Created By   : Giriraj Parik
+Date         : 12/02/2025
+Case#        : 17507129
+//End Notes
+
+//SQL
+
+GO
+If Not Exists (Select Name From SysObjects Where Name = 'DataFixHistory')
+Create Table DataFixHistory
+(
+hMy NUMERIC(18,0) IDENTITY(1,1) Not Null,
+hyCRM NUMERIC (18,0) Not Null,
+sTableName VARCHAR(400) Not Null,
+sColumnName VARCHAR(400) Not Null,
+hForeignKey NUMERIC(18,0) Not Null,
+sNotes VarChar(2000) Not Null,
+sNewValue VARCHAR(100),
+sOldValue VARCHAR(100),
+dtDate DATETIME
+)
+Else If Not Exists (Select * From INFORMATION_SCHEMA.COLUMNS Where Table_Name = 'DataFixHistory' and Column_Name = 'sColumnName')
+Alter Table DataFixHistory Add sColumnName VARCHAR(400) Null
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select 17507129,'Tenant','iLateType',t.hmyperson,'updating iLateType',(select CASE WHEN T.iLateType = 50 THEN 0 WHEN T.iLateType = 51 THEN 1 WHEN T.iLateType = 52 THEN 2 WHEN T.iLateType = 53 THEN 3 END ),T.iLateType,getdate() 
+FROM TENANT T INNER JOIN PROPERTY P ON T.HPROPERTY = P.HMY INNER JOIN CommPropConfig CPC ON CPC.hProperty = p.HMY INNER JOIN Country_info ci ON p.HCOUNTRY = ci.HMY WHERE CPC.iLateFeePreference = 0 AND T.iLateType IS NOT NULL AND ISNULL(p.hLegalEntity, 0) = 0 AND T.iLateType IN (50, 51, 52, 53)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select 17507129,'Tenant','iLateType2',t.hmyperson,'updating iLateType2',(select CASE WHEN T.iLateType2 = 50 THEN 0 WHEN T.iLateType2 = 51 THEN 1 WHEN T.iLateType2 = 52 THEN 2 WHEN T.iLateType2 = 53 THEN 3 END ) ,T.iLateType2,getdate() 
+FROM TENANT T INNER JOIN PROPERTY P ON T.HPROPERTY = P.HMY INNER JOIN CommPropConfig CPC ON CPC.hProperty = p.HMY INNER JOIN Country_info ci ON p.HCOUNTRY = ci.HMY WHERE CPC.iLateFeePreference = 0 AND T.iLateType IS NOT NULL AND ISNULL(p.hLegalEntity, 0) = 0 AND T.iLateType IN (50, 51, 52, 53) and T.iLateType2 in (50, 51, 52, 53)
+)
+
+GO
+UPDATE T
+SET T.iLateType = (
+		CASE 
+			WHEN T.iLateType = 50
+				THEN 0
+			WHEN T.iLateType = 51
+				THEN 1
+			WHEN T.iLateType = 52
+				THEN 2
+			WHEN T.iLateType = 53
+				THEN 3
+			END
+		)
+	,T.iLateType2 = (
+		CASE 
+			WHEN T.iLateType2 = 50
+				THEN 0
+			WHEN T.iLateType2 = 51
+				THEN 1
+			WHEN T.iLateType2 = 52
+				THEN 2
+			WHEN T.iLateType2 = 53
+				THEN 3
+			END
+		)
+FROM TENANT T
+INNER JOIN PROPERTY P ON T.HPROPERTY = P.HMY
+INNER JOIN CommPropConfig CPC ON CPC.hProperty = p.HMY
+INNER JOIN Country_info ci ON p.HCOUNTRY = ci.HMY
+WHERE CPC.iLateFeePreference = 0
+	AND T.iLateType IS NOT NULL
+	AND ISNULL(p.hLegalEntity, 0) = 0
+	AND T.iLateType IN (
+		50
+		,51
+		,52
+		,53
+		)
+
+Go
+//End SQL

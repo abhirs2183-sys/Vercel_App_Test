@@ -1,0 +1,437 @@
+import re
+from datetime import datetime
+import pytz
+
+import os  #edited
+
+
+def log_usage(created_by, case_id):  #edited
+    os.makedirs("logs", exist_ok=True)  #edited
+    #edited
+    with open("logs/usage.txt", "a", encoding="utf-8") as f:  #edited
+        f.write(  #edited
+            f"{datetime.now()} | Created By: {created_by} | Case#: {case_id}\n"
+        )  #edited
+
+
+def process_pkg_file(content):
+    lines = content.strip().split('\n')
+
+    metadata = parse_metadata(lines)
+    if 'error' in metadata:
+        return metadata
+    #log_usage(metadata['created_by'], metadata['case_id'])  #edited
+    sql_queries = extract_sql_queries(lines)
+    if not sql_queries:
+        return {'error': 'No SQL queries found in the file'}
+
+    output = generate_output(metadata, sql_queries)
+
+    return {
+        'filename': f"Case#{metadata['case_id']}#Datafix.pkg",
+        'content': output,
+        'case_id': metadata['case_id'],
+        'created_by': metadata['created_by']
+    }
+
+
+def parse_metadata(lines):
+    metadata = {
+        'created_by': '',
+        'case_id': '',
+        'client_pin': '',
+        'client_name': '',
+        'username': '',
+        'password': '',
+        'db_server': '',
+        'db_name': ''
+    }
+
+    for line in lines:
+        line_stripped = line.strip()
+        if not line_stripped:
+            continue
+
+        line_lower = line_stripped.lower()
+
+        if line_lower.startswith('created by:') or line_lower.startswith(
+                'created by :'):
+            metadata['created_by'] = extract_value(line_stripped)
+        elif line_lower.startswith('case#:') or line_lower.startswith(
+                'case# :') or line_lower.startswith('case #:'):
+            metadata['case_id'] = extract_value(line_stripped)
+        elif line_lower.startswith('client pin:') or line_lower.startswith(
+                'client pin :'):
+            metadata['client_pin'] = extract_value(line_stripped)
+        elif line_lower.startswith('client name:') or line_lower.startswith(
+                'client name :'):
+            metadata['client_name'] = extract_value(line_stripped)
+        elif line_lower.startswith('database:') or line_lower.startswith(
+                'database :'):
+            db_parts = extract_value(line_stripped).split()
+            if len(db_parts) >= 4:
+                metadata['username'] = db_parts[0]
+                metadata['password'] = db_parts[1]
+                metadata['db_server'] = db_parts[2]
+                metadata['db_name'] = db_parts[3] if len(
+                    db_parts) > 3 else db_parts[2]
+            elif len(db_parts) >= 1:
+                metadata['db_name'] = db_parts[0]
+
+    if not metadata['case_id']:
+        return {'error': 'Case# not found in the input file'}
+    if not metadata['created_by']:
+        return {'error': 'Created By not found in the input file'}
+
+    return metadata
+
+
+def extract_value(line):
+    if ':' in line:
+        return line.split(':', 1)[1].strip()
+    return ''
+
+
+def extract_sql_queries(lines):
+    queries = []
+    current_query_lines = []
+    in_query = False
+
+    metadata_prefixes = [
+        'created by', 'case#', 'case #', 'client pin', 'client name',
+        'database:'
+    ]
+
+    for i, line in enumerate(lines):
+        line_stripped = line.strip()
+        line_lower = line_stripped.lower()
+
+        is_metadata = any(
+            line_lower.startswith(prefix) for prefix in metadata_prefixes)
+        if is_metadata:
+            continue
+
+        if is_sql_statement_start(line_stripped):
+            if current_query_lines:
+                query_text = '\n'.join(current_query_lines).strip()
+                if query_text:
+                    queries.append(query_text)
+                current_query_lines = []
+            current_query_lines.append(line_stripped)
+            in_query = True
+        elif in_query and line_stripped:
+            current_query_lines.append(line_stripped)
+
+    if current_query_lines:
+        query_text = '\n'.join(current_query_lines).strip()
+        if query_text:
+            queries.append(query_text)
+
+    return queries
+
+
+def is_sql_statement_start(line):
+    line_lower = line.lower()
+    sql_keywords = ['update ', 'delete ', 'exec ', 'execute ']
+    return any(line_lower.startswith(kw) for kw in sql_keywords)
+
+
+def generate_output(metadata, sql_queries):
+    ist = pytz.timezone('Asia/Kolkata')
+    current_date = datetime.now(ist).strftime('%m/%d/%Y')
+
+    output_lines = []
+
+    output_lines.append('//Notes')
+    output_lines.append(f"Client Pin     : {metadata['client_pin']}")
+    output_lines.append(f"Client Name    : {metadata['client_name']}")
+    output_lines.append(f"User Name      : {metadata['username']}")
+    output_lines.append(f"Password       : {metadata['password']}")
+    output_lines.append(f"DB Server      : {metadata['db_server']}")
+    output_lines.append(f"Instance       : {metadata['db_server']}")
+    output_lines.append(f"DB Name        : {metadata['db_name']}")
+    output_lines.append('')
+    output_lines.append('')
+    #output_lines.append('')
+    #output_lines.append('')
+    #output_lines.append('')
+    #output_lines.append('')
+    #output_lines.append(f"Created By        : {metadata['created_by']}")
+    #output_lines.append(f"Date              : {current_date}")
+    #output_lines.append(f"Case#             : {metadata['case_id']}")
+    output_lines.append(f"Created By      : {metadata['created_by']}")  #edited
+    output_lines.append(f"Date            : {current_date}")  #edited
+    output_lines.append(f"Case#           : {metadata['case_id']}")  #edited
+    output_lines.append('//End Notes')
+    output_lines.append('')
+    output_lines.append('')
+    output_lines.append('//SQL')
+    output_lines.append('GO')
+    output_lines.append(
+        "If Not Exists (Select Name From SysObjects Where Name = 'DataFixHistory')"
+    )
+    output_lines.append('        Create Table DataFixHistory')
+    output_lines.append('        (')
+    output_lines.append(
+        '                hMy NUMERIC(18,0) IDENTITY(1,1) Not Null,')
+    output_lines.append('                hyCRM NUMERIC (18,0) Not Null,')
+    output_lines.append('                sTableName VARCHAR(400) Not Null,')
+    output_lines.append('                sColumnName VARCHAR(400) Not Null,')
+    output_lines.append('                hForeignKey NUMERIC(18,0) Not Null,')
+    output_lines.append('                sNotes VarChar(2000) Not Null,')
+    output_lines.append('                sNewValue VARCHAR(100),')
+    output_lines.append('                sOldValue VARCHAR(100),')
+    output_lines.append('                dtDate DATETIME')
+    output_lines.append('        )')
+    output_lines.append(
+        "Else If Not Exists (Select * From INFORMATION_SCHEMA.COLUMNS Where Table_Name = 'DataFixHistory' and Column_Name = 'sColumnName')"
+    )
+    output_lines.append(
+        '        Alter Table DataFixHistory Add sColumnName VARCHAR(400) Null')
+    output_lines.append('')
+
+    delete_table_counts = {}
+
+    for query in sql_queries:
+        query_type = get_query_type(query)
+
+        if query_type == 'UPDATE':
+            backup_statements = generate_update_backup(query,
+                                                       metadata['case_id'])
+            for stmt in backup_statements:
+                output_lines.append('GO')
+                output_lines.append(stmt)
+                output_lines.append('')
+        elif query_type == 'DELETE':
+            table_name = extract_table_from_delete(query)
+            if table_name:
+                count = delete_table_counts.get(table_name.lower(), 0)
+                backup_statements = generate_delete_backup(
+                    query, metadata['case_id'], table_name, count)
+                delete_table_counts[table_name.lower()] = count + 1
+                for stmt in backup_statements:
+                    output_lines.append('GO')
+                    output_lines.append(stmt)
+                    output_lines.append('')
+
+    output_lines.append('GO')
+    for query in sql_queries:
+        output_lines.append(query)
+
+    output_lines.append('Go')
+    output_lines.append('//End SQL')
+
+    return '\n'.join(output_lines)
+
+
+def get_query_type(query):
+    query_lower = query.strip().lower()
+    if query_lower.startswith('update '):
+        return 'UPDATE'
+    elif query_lower.startswith('delete '):
+        return 'DELETE'
+    elif query_lower.startswith('exec ') or query_lower.startswith('execute '):
+        return 'EXEC'
+    return 'UNKNOWN'
+
+
+def generate_update_backup(query, case_id):
+    statements = []
+
+    table_info = extract_update_table_info(query)
+    if not table_info:
+        return statements
+
+    table_name = table_info['table_name']
+    set_clause = table_info['set_clause']
+    where_clause = table_info['where_clause']
+
+    column_updates = parse_set_clause(set_clause)
+
+    fk_column = get_foreign_key_column(table_name)
+
+    for col_name, new_value in column_updates:
+        stmt = f"Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)\n"
+        stmt += f"(Select '{case_id}', '{table_name}','{col_name}',{fk_column}, 'Updating {col_name}',{new_value},{col_name}, getdate() \n"
+        stmt += f"from {table_name}"
+        if where_clause:
+            stmt += f" {where_clause}"
+        stmt += "\n)"
+
+        statements.append(stmt)
+
+    return statements
+
+
+# def extract_update_table_info(query):
+#     query_single = ' '.join(query.split())
+
+#     where_match = re.search(r'\s+(where\s+.+)$', query_single, re.IGNORECASE)
+#     where_clause = where_match.group(1).strip() if where_match else ''
+
+#     if where_clause:
+#         query_without_where = query_single[:where_match.start()].strip()
+#     else:
+#         query_without_where = query_single
+
+#     set_match = re.search(r'update\s+(\w+)\s+set\s+(.+)$', query_without_where,
+#                           re.IGNORECASE)
+#     if set_match:
+#         return {
+#             'table_name': set_match.group(1),
+#             'set_clause': set_match.group(2).strip(),
+#             'where_clause': where_clause
+#         }
+
+#     return None
+
+
+def extract_update_table_info(query):  #edited
+    query_single = ' '.join(query.split())  #edited
+    # --- 1. locate UPDATE <table> SET --- #edited
+    m = re.search(r'update\s+(\w+)\s+set\s+', query_single,
+                  re.IGNORECASE)  #edited
+    if not m:  #edited
+        return None  #edited
+
+
+#edited
+    table_name = m.group(1)  #edited
+    set_start = m.end()  #edited
+    #edited
+    # --- 2. find WHERE at depth 0 (not inside parentheses) --- #edited
+    depth = 0  #edited
+    where_pos = None  #edited
+    #edited
+    for i in range(set_start, len(query_single)):  #edited
+        c = query_single[i]  #edited
+        if c == '(':  #edited
+            depth += 1  #edited
+        elif c == ')':  #edited
+            depth -= 1  #edited
+        elif depth == 0 and query_single[i:i + 6].lower() == 'where ':  #edited
+            where_pos = i  #edited
+            break  #edited
+    #edited
+    if where_pos is None:  #edited
+        # no WHERE found at depth 0 → no outer WHERE #edited
+        set_clause = query_single[set_start:].strip()  #edited
+        where_clause = ''  #edited
+    else:  #edited
+        set_clause = query_single[set_start:where_pos].strip()  #edited
+        where_clause = query_single[where_pos:].strip()  #edited
+    #edited
+    return {  #edited
+        'table_name': table_name,  #edited
+        'set_clause': set_clause,  #edited
+        'where_clause': where_clause  #edited
+    }  #edited
+
+
+def parse_set_clause(set_clause):
+    updates = []
+    parts = smart_split_set_clause(set_clause)
+
+    for part in parts:
+        part = part.strip()
+        if '=' in part:
+            eq_pos = find_first_equals(part)
+            if eq_pos > 0:
+                col_name = part[:eq_pos].strip()
+                new_value = part[eq_pos + 1:].strip()
+                updates.append((col_name, new_value))
+    return updates
+
+
+def find_first_equals(s):
+    for i, char in enumerate(s):
+        if char == '=':
+            if i > 0 and s[i - 1] in '<>!':
+                continue
+            if i < len(s) - 1 and s[i + 1] == '=':
+                continue
+            return i
+    return -1
+
+
+def smart_split_set_clause(set_clause):
+    parts = []
+    current = []
+    paren_depth = 0
+    in_string = False
+    string_char = None
+
+    i = 0
+    while i < len(set_clause):
+        char = set_clause[i]
+
+        if not in_string and char in ("'", '"'):
+            in_string = True
+            string_char = char
+            current.append(char)
+        elif in_string and char == string_char:
+            in_string = False
+            string_char = None
+            current.append(char)
+        elif not in_string and char == '(':
+            paren_depth += 1
+            current.append(char)
+        elif not in_string and char == ')':
+            paren_depth -= 1
+            current.append(char)
+        elif char == ',' and paren_depth == 0 and not in_string:
+            parts.append(''.join(current))
+            current = []
+        else:
+            current.append(char)
+
+        i += 1
+
+    if current:
+        parts.append(''.join(current))
+
+    return parts
+
+
+def get_foreign_key_column(table_name):
+    table_lower = table_name.lower()
+    if table_lower == 'tenant':
+        return 'hmyperson'
+    return 'hmy'
+
+
+def generate_delete_backup(query, case_id, table_name, count):
+    statements = []
+
+    where_match = re.search(r'where\s+(.+)$', query, re.IGNORECASE | re.DOTALL)
+    where_clause = where_match.group(1).strip() if where_match else ''
+
+    fk_column = get_foreign_key_column(table_name)
+
+    stmt = f"Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)\n"
+    stmt += f"(Select '{case_id}', '{table_name}','',{fk_column}, 'Deleting records','','', getdate() \n"
+    stmt += f"from {table_name}"
+    if where_clause:
+        stmt += f" where {where_clause}"
+    stmt += "\n)"
+    statements.append(stmt)
+
+    if count == 0:
+        backup_table = f"{table_name}_{case_id}"
+    else:
+        backup_table = f"{table_name}_{count}_{case_id}"
+
+    backup_stmt = f"select * into {backup_table} from {table_name}"
+    if where_clause:
+        backup_stmt += f" where {where_clause}"
+    statements.append(backup_stmt)
+
+    return statements
+
+
+def extract_table_from_delete(query):
+    pattern = r'delete\s+(?:from\s+)?(\w+)'
+    match = re.search(pattern, query, re.IGNORECASE)
+    if match:
+        return match.group(1)
+    return None

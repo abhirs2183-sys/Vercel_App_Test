@@ -1,0 +1,57 @@
+To take the backup now add the below notes section on top of the file output file and then the content of the input files (sql queries as it is, but insert Go before the query.)
+
+//Notes
+Client Pin: 100067837
+Client Name: Anthem Properties Group Ltd.
+User Name: 25232345_112725
+Password: vz5whRS7adhUZA4c
+DB Server: PCD001DB47
+Instance: PCD001DB47
+DB Name: vvghwirki_live_112725_1
+
+Created By : Giriraj Parik
+Date : 12/01/2025
+Case# : 17489338
+//End Notes
+
+Created by will be provided in the first line.
+Case id or case # will be provided in the second line.
+Client pin will be provided in the third line and the fourth line will contain the client name:
+The username, passoword, db server, dbname will be in the next line and in a single line.
+The db server and db instance are always the same.
+For date use the current IST date
+
+I will provide the below data in input file itself like shown below.
+E.g.
+Created by: Giriraj Parik
+Case#: 17489338
+Client Pin: 100067837
+Client Name: Anthem Properties Group Ltd.
+Database: 25246839_113025 0Jk1IZH3lLWdulnf PCD001DB45 vvghwirki_live_113025
+
+and then sql queries below this.
+dont worry about the passowrd they are not real ones.
+make the colons appear in the same line so it will look good.
+
+Now after the notes section add the below code as it is
+//SQL
+GO
+If Not Exists (Select Name From SysObjects Where Name = 'DataFixHistory')
+Create Table DataFixHistory
+(
+hMy NUMERIC(18,0) IDENTITY(1,1) Not Null,
+hyCRM NUMERIC (18,0) Not Null,
+sTableName VARCHAR(400) Not Null,
+sColumnName VARCHAR(400) Not Null,
+hForeignKey NUMERIC(18,0) Not Null,
+sNotes VarChar(2000) Not Null,
+sNewValue VARCHAR(100),
+sOldValue VARCHAR(100),
+dtDate DATETIME
+)
+Else If Not Exists (Select * From INFORMATION_SCHEMA.COLUMNS Where Table_Name = 'DataFixHistory' and Column_Name = 'sColumnName')
+Alter Table DataFixHistory Add sColumnName VARCHAR(400) Null.
+
+now paste the sql queries as it is.
+
+more instructions in next prompt.

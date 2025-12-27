@@ -1,0 +1,178 @@
+//Notes
+Client Pin: 100031072
+Client Name: Welltower OP LLC
+User Name: 25167901_112125 
+Password: dOY5YGqWCKPeNtZI 
+DB Server: PCZ001DB97 
+Instance: PCZ001DB97
+DB Name: vuvorjczo_live_112125
+
+Created By        : Shivani Magar
+Date              : 11/24/2025
+Case#             : 17459884
+//End Notes
+
+
+//SQL
+GO
+If Not Exists (Select Name From SysObjects Where Name = 'DataFixHistory')
+	Create Table DataFixHistory
+	(
+		hMy NUMERIC(18,0) IDENTITY(1,1) Not Null,
+		hyCRM NUMERIC (18,0) Not Null,
+		sTableName VARCHAR(400) Not Null,
+		sColumnName VARCHAR(400) Not Null,
+		hForeignKey NUMERIC(18,0) Not Null,				
+		sNotes VarChar(2000) Not Null,				
+		sNewValue VARCHAR(100),
+		sOldValue VARCHAR(100),
+		dtDate DATETIME
+	)
+Else If Not Exists (Select * From INFORMATION_SCHEMA.COLUMNS Where Table_Name = 'DataFixHistory' and Column_Name = 'sColumnName')
+	Alter Table DataFixHistory Add sColumnName VARCHAR(400) Null
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '17459884', 'gldetail','',hmy, 'Deleting records','','', getdate() 
+from gldetail where htran = 600213883
+)
+
+GO
+select * into gldetail_17459884 from gldetail where htran = 600213883
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '17459884', 'detail','',hmy, 'Deleting records','','', getdate() 
+from detail where hinvorrec = 600213883
+)
+
+GO
+select * into detail_17459884 from detail where hinvorrec = 600213883
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '17459884', 'gldetail','',hmy, 'Deleting records','','', getdate() 
+from gldetail where hdetail in (39170694, 39170696)
+)
+
+GO
+select * into gldetail_1_17459884 from gldetail where hdetail in (39170694, 39170696)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '17459884', 'detail','',hmy, 'Deleting records','','', getdate() 
+from detail where hmy in (39170694, 39170696)
+)
+
+GO
+select * into detail_1_17459884 from detail where hmy in (39170694, 39170696)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '17459884', 'detail','hchkorchg',hmy, 'Updating hchkorchg',NULL,hchkorchg, getdate() 
+from detail where hmy = 39170695
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '17459884', 'trans','',hmy, 'Deleting records','','', getdate() 
+from trans where hmy = 600213883
+)
+
+GO
+select * into trans_17459884 from trans where hmy = 600213883
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '17459884', 'trans','bopen',hmy, 'Updating bopen',-1,bopen, getdate() 
+from trans where hmy = 600213726
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '17459884', 'gldetail','',hmy, 'Deleting records','','', getdate() 
+from gldetail where hdetail in (15562156, 15562153, 15562152)
+)
+
+GO
+select * into gldetail_2_17459884 from gldetail where hdetail in (15562156, 15562153, 15562152)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '17459884', 'detail','',hmy, 'Deleting records','','', getdate() 
+from detail where hmy in (15562156, 15562153, 15562152)
+)
+
+GO
+select * into detail_2_17459884 from detail where hmy in (15562156, 15562153, 15562152)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '17459884', 'detail','hchkorchg',hmy, 'Updating hchkorchg',NULL,hchkorchg, getdate() 
+from detail where hmy = 14761191
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '17459884', 'trans','bopen',hmy, 'Updating bopen',-1,bopen, getdate() 
+from trans where  hmy = 600042500
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '17459884', 'trans','bopen',hmy, 'Updating bopen',-1,bopen, getdate() 
+from trans where  hmy in (700098999, 700708297, 700708298, 700708299, 700714135, 700714136, 700714137, 700104715)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '17459884', 'trans','samountpaid',hmy, 'Updating samountpaid',0,samountpaid, getdate() 
+from trans where  hmy in (700098999, 700708297, 700708298, 700708299, 700714135, 700714136, 700714137)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '17459884', 'trans','hparent1',hmy, 'Updating hparent1',0,hparent1, getdate() 
+from trans where  hmy in (700098999, 700708297, 700708298, 700708299, 700714135, 700714136, 700714137)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '17459884', 'trans','samountpaid',hmy, 'Updating samountpaid',0.54,samountpaid, getdate() 
+from trans where hmy = 700104715
+)
+
+GO
+delete from gldetail where htran = 600213883
+delete from detail where hinvorrec = 600213883
+delete from gldetail where hdetail in (39170694, 39170696)
+delete from detail where hmy in (39170694, 39170696)
+update detail set hchkorchg = NULL where hmy = 39170695
+delete from trans where hmy = 600213883
+
+update trans set bopen = -1 where hmy = 600213726
+
+delete from gldetail where hdetail in (15562156, 15562153, 15562152)
+delete from detail where hmy in (15562156, 15562153, 15562152)
+update detail set hchkorchg = NULL where hmy = 14761191
+
+update trans set bopen = -1 where hmy = 600042500
+
+update trans set bopen = -1, samountpaid = 0, hparent1 = 0 where hmy in (700098999, 700708297, 700708298, 700708299, 700714135, 700714136, 700714137)
+update trans set bopen = -1, samountpaid = (select sum(samount) from detail where hchkorchg = 700104715) where hmy = 700104715
+
+exec Yardi_Rebuild_Receipt 600213726
+exec Yardi_Rebuild_Receipt 600050120
+exec Yardi_Rebuild_Receipt 600042500
+
+exec Yardi_Rebuild_Charge 700098999
+exec Yardi_Rebuild_Charge 700708297
+exec Yardi_Rebuild_Charge 700708298
+exec Yardi_Rebuild_Charge 700708299
+exec Yardi_Rebuild_Charge 700714135
+exec Yardi_Rebuild_Charge 700714136
+exec Yardi_Rebuild_Charge 700714137
+exec Yardi_Rebuild_Charge 700104715
+
+Go
+//End SQL

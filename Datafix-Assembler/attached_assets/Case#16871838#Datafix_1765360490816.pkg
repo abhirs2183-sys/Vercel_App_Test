@@ -1,0 +1,15 @@
+Created By        : Giriraj Parik
+Case#             : 16871838
+Client Pin: 100071619
+Client Name: PIRET Management LP, by its general partner PIRET Management Corp.
+Database: 23864563_080725     WD5jyDSrjQO62ZYd PCZ001DB137   kdozwxlxo_live_080725
+
+
+update camrule set hchargecode = 9 where htenant = 51655 and hchargecode = 10
+update commschedule set hchargecode = 9 where htenant = 51655 and hchargecode = 10
+update camcharg set hchargecode = 9 where hcamrule in (select hmy from camrule where htenant = 51655) and hchargecode = 10
+update gldetail set sNotes = LEFT(sNotes, len(sNotes) - charindex (' ', reverse(sNotes))) + ' rentoff' where hdetail in (select hmy FROM detail WHERE hInvOrRec in  (select htran from commstraightlinedetail where hstraightline in (select hmy from commstraightline where htenant = 51655)))
+update detail set sNotes = LEFT(sNotes, len(sNotes) - charindex (' ', reverse(sNotes))) + ' rentoff' where hInvOrRec in  (select htran from commstraightlinedetail where hstraightline in (select hmy from commstraightline where htenant = 51655))
+update trans set hretentionacct = 9 where hmy in (select hpostref from camcharg where hcamrule in (select hmy from camrule where htenant = 51655)) and hretentionacct = 10
+update trans set sNotes = LEFT(sNotes, len(sNotes) - charindex (' ', reverse(sNotes))) + ' rentoff' where hmy in  (select htran from commstraightlinedetail where hstraightline in (select hmy from commstraightline where htenant = 51655))
+update commstraightline set hchargecode = 9 where htenant = 51655

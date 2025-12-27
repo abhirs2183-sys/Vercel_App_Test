@@ -1,0 +1,98 @@
+//Notes
+Client Pin: 100071619
+Client Name: PIRET Management LP, by its general partner PIRET Management Corp.
+User Name: 23864563_080725 
+Password: WD5jyDSrjQO62ZYd 
+DB Server: PCZ001DB137 
+Instance: PCZ001DB137 
+DB Name: kdozwxlxo_live_080725 
+
+
+
+
+
+
+Created By        : Giriraj Parik
+Date              : 08/07/2025
+Case#             : 16871838
+//End Notes
+
+
+//SQL
+GO
+If Not Exists (Select Name From SysObjects Where Name = 'DataFixHistory')
+	Create Table DataFixHistory
+	(
+		hMy NUMERIC(18,0) IDENTITY(1,1) Not Null,
+		hyCRM NUMERIC (18,0) Not Null,
+		sTableName VARCHAR(400) Not Null,
+		sColumnName VARCHAR(400) Not Null,
+		hForeignKey NUMERIC(18,0) Not Null,				
+		sNotes VarChar(2000) Not Null,				
+		sNewValue VARCHAR(100),
+		sOldValue VARCHAR(100),
+		dtDate DATETIME
+	)
+Else If Not Exists (Select * From INFORMATION_SCHEMA.COLUMNS Where Table_Name = 'DataFixHistory' and Column_Name = 'sColumnName')
+	Alter Table DataFixHistory Add sColumnName VARCHAR(400) Null
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16871838', 'camrule','hchargecode',hmy, 'Updating hchargecode',9,hchargecode, getdate() 
+from camrule where htenant = 51655 and hchargecode = 10
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16871838', 'commschedule','hchargecode',hmy, 'Updating hchargecode',9,hchargecode, getdate() 
+from commschedule where htenant = 51655 and hchargecode = 10
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16871838', 'camcharg','hchargecode',hmy, 'Updating hchargecode',9,hchargecode, getdate() 
+from camcharg where hcamrule in (select hmy from camrule where htenant = 51655) and hchargecode = 10
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16871838', 'gldetail','sNotes',hmy, 'Updating sNotes',(LEFT(sNotes, len(sNotes) - charindex (' ', reverse(sNotes))) + ' rentoff'),sNotes, getdate() 
+from gldetail where hdetail in (select hmy FROM detail WHERE hInvOrRec in  (select htran from commstraightlinedetail where hstraightline in (select hmy from commstraightline where htenant = 51655)))
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16871838', 'detail','sNotes',hmy, 'Updating sNotes',(LEFT(sNotes, len(sNotes) - charindex (' ', reverse(sNotes))) + ' rentoff'),sNotes, getdate() 
+from detail where hInvOrRec in  (select htran from commstraightlinedetail where hstraightline in (select hmy from commstraightline where htenant = 51655))
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16871838', 'trans','hretentionacct',hmy, 'Updating hretentionacct',9,hretentionacct, getdate() 
+from trans where hmy in (select hpostref from camcharg where hcamrule in (select hmy from camrule where htenant = 51655)) and hretentionacct = 10
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16871838', 'trans','sNotes',hmy, 'Updating sNotes',(LEFT(sNotes, len(sNotes) - charindex (' ', reverse(sNotes))) + ' rentoff'),sNotes, getdate() 
+FROM trans where hmy in  (select htran from commstraightlinedetail where hstraightline in (select hmy from commstraightline where htenant = 51655))
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16871838', 'commstraightline','hchargecode',hmy, 'Updating hchargecode',9,hchargecode, getdate() 
+from commstraightline where htenant = 51655
+)
+
+
+GO
+update camrule set hchargecode = 9 where htenant = 51655 and hchargecode = 10
+update commschedule set hchargecode = 9 where htenant = 51655 and hchargecode = 10
+update camcharg set hchargecode = 9 where hcamrule in (select hmy from camrule where htenant = 51655) and hchargecode = 10
+update gldetail set sNotes = LEFT(sNotes, len(sNotes) - charindex (' ', reverse(sNotes))) + ' rentoff' where hdetail in (select hmy FROM detail WHERE hInvOrRec in  (select htran from commstraightlinedetail where hstraightline in (select hmy from commstraightline where htenant = 51655)))
+update detail set sNotes = LEFT(sNotes, len(sNotes) - charindex (' ', reverse(sNotes))) + ' rentoff' where hInvOrRec in  (select htran from commstraightlinedetail where hstraightline in (select hmy from commstraightline where htenant = 51655))
+update trans set hretentionacct = 9 where hmy in (select hpostref from camcharg where hcamrule in (select hmy from camrule where htenant = 51655)) and hretentionacct = 10
+update trans set sNotes = LEFT(sNotes, len(sNotes) - charindex (' ', reverse(sNotes))) + ' rentoff' where hmy in  (select htran from commstraightlinedetail where hstraightline in (select hmy from commstraightline where htenant = 51655))
+update commstraightline set hchargecode = 9 where htenant = 51655
+Go
+//End SQL

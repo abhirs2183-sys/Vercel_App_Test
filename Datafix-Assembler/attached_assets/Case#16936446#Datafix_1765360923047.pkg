@@ -1,0 +1,256 @@
+//Notes
+Client Pin: 100093736 
+Client Name: Remedy Medical Properties, Inc.
+User Name: 24008496_081925
+Password: 6a2J3jePjUECJRql 
+DB Server: PCZ001DB93 
+Instance: PCZ001DB93 
+DB Name: vrglntduh_live_081925 
+
+
+Created By        : Giriraj Parik
+Date              : 08/20/2025
+Case#             : 16936446
+//End Notes
+
+
+//SQL
+GO
+If Not Exists (Select Name From SysObjects Where Name = 'DataFixHistory')
+	Create Table DataFixHistory
+	(
+		hMy NUMERIC(18,0) IDENTITY(1,1) Not Null,
+		hyCRM NUMERIC (18,0) Not Null,
+		sTableName VARCHAR(400) Not Null,
+		sColumnName VARCHAR(400) Not Null,
+		hForeignKey NUMERIC(18,0) Not Null,				
+		sNotes VarChar(2000) Not Null,				
+		sNewValue VARCHAR(100),
+		sOldValue VARCHAR(100),
+		dtDate DATETIME
+	)
+Else If Not Exists (Select * From INFORMATION_SCHEMA.COLUMNS Where Table_Name = 'DataFixHistory' and Column_Name = 'sColumnName')
+	Alter Table DataFixHistory Add sColumnName VARCHAR(400) Null
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'camrule','hAmendmentInactive',hmy, 'Updating hAmendmentInactive',NULL,hAmendmentInactive, getdate() 
+from camrule where hmy in (336013, 302927, 341946)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'camrule','dtTo',hmy, 'Updating dtTo',NULL,dtTo, getdate() 
+from camrule where hmy in (336013, 302927, 341946)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'camrule','blocked',hmy, 'Updating blocked',0,blocked, getdate() 
+from camrule where hmy in (342881, 302929, 328796, 336013, 302924, 302925, 302926, 302927, 341946)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'camrule','hamendmentinactive',hmy, 'Updating hamendmentinactive',0,hamendmentinactive, getdate() 
+from camrule where hamendment = 40308 and hchargecode in (27, 40)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'camrule','dtto',hmy, 'Updating dtto','2034-10-31',dtto, getdate() 
+from camrule where hmy = 342883
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'camrule','dtto',hmy, 'Updating dtto','2025-10-31',dtto, getdate() 
+from camrule where hmy = 342881
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'camrule','dtto',hmy, 'Updating dtto',dateadd(day, -1, dateadd(year, 1, dtfrom)),dtto, getdate() 
+from camrule where hamendment = 40308 and hchargecode = 40 and hmy <> 342881
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'camrule','hAmendmentInactive',hmy, 'Updating hAmendmentInactive',0,hAmendmentInactive, getdate() 
+from camrule where hamendment = 42194
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'camrule','hTenant',hmy, 'Updating hTenant',NULL,hTenant, getdate() 
+from camrule where hamendment in (42194, 40308)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'commschedule','dtTo',hmy, 'Updating dtTo',NULL,dtTo, getdate() 
+from commschedule where hmy in (216763, 216761, 231073)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'commschedule','hAmendmentInactive',hmy, 'Updating hAmendmentInactive',0,hAmendmentInactive, getdate() 
+from commschedule where hmy in (231298, 231296, 216763, 216761, 231073)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'commschedule','dtTo',hmy, 'Updating dtTo','2034-10-31',dtTo, getdate() 
+from commschedule where hmy in (231298, 231296)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'commschedule','bLocked',hmy, 'Updating bLocked',0,bLocked, getdate() 
+from commschedule where hmy in (231296, 216763, 216761, 231073)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'commschedule','htenant',hmy, 'Updating htenant',NULL,htenant, getdate() 
+from commschedule where hAmendment in (42194,40308)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'unitxref','dtLeaseTo',hmy, 'Updating dtLeaseTo',NULL,dtLeaseTo, getdate() 
+from unitxref where hAmendment = 34225
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'unitxref','dtmoveout',hmy, 'Updating dtmoveout',NULL,dtmoveout, getdate() 
+from unitxref where hAmendment in (40308, 34225)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'unitxref','hAmendmentInactive',hmy, 'Updating hAmendmentInactive',NULL,hAmendmentInactive, getdate() 
+from unitxref where hAmendment in (40308, 34225)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'unitxref','dtLeaseto',hmy, 'Updating dtLeaseto','2034-10-31',dtLeaseto, getdate() 
+from unitxref where hAmendment = 40308
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'unitxref','htenant',hmy, 'Updating htenant',NULL,htenant, getdate() 
+from unitxref where hAmendment in (42194, 40308)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'commamendments','dtEnd',hmy, 'Updating dtEnd',NULL,dtEnd, getdate() 
+from commamendments where hmy = 34225
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'commamendments','istatus',hmy, 'Updating istatus',1,istatus, getdate() 
+from commamendments where hmy = 34225
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'commamendments','hAmendmentInactive',hmy, 'Updating hAmendmentInactive',0,hAmendmentInactive, getdate() 
+from commamendments where hmy in (40308, 34225)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'commamendments','dtMoveOut',hmy, 'Updating dtMoveOut',NULL,dtMoveOut, getdate() 
+from commamendments where hmy in (40308, 34225)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'commamendments','hAmendmentModified',hmy, 'Updating hAmendmentModified',34225,hAmendmentModified, getdate() 
+from commamendments where hmy = 42194
+)
+	
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'commamendments','dtAmendment',hmy, 'Updating dtAmendment',NULL,dtAmendment, getdate() 
+from commamendments where hmy in (42194, 40308)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'commamendments','iSequence',hmy, 'Updating iSequence',-1,iSequence, getdate() 
+from commamendments where hmy in (42194, 40308)
+)
+	
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'commamendments','iStatus',hmy, 'Updating iStatus',0,iStatus, getdate() 
+from commamendments where hmy in (42194, 40308)
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'commamendments','isequence',hmy, 'Updating isequence','1',isequence, getdate() 
+from commamendments where hmy = 42195
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'commamendments','bOngoingLease',hmy, 'Updating bOngoingLease',-1,bOngoingLease, getdate() 
+from commamendments where hmy = 42195
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'tenant','sunitcode',hmyperson, 'Updating sunitcode','104',sunitcode, getdate() 
+from tenant where hmyperson = 79974
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'tenant','dtLeaseTo',hmyperson, 'Updating dtLeaseTo',NULL,dtLeaseTo, getdate() 
+from tenant where hmyperson = 79974
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'tenant','hunit',hmyperson, 'Updating hunit',29401,hunit, getdate() 
+from tenant where hmyperson = 79974
+)
+
+GO
+Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)
+(Select '16936446', 'tenant','putcode',hmyperson, 'Updating putcode','k1tj495 104 t0021933',putcode, getdate() 
+from tenant where hmyperson = 79974
+)
+
+GO
+update camrule set dtTo = NULL, hAmendmentInactive = 0 where hmy in (336013, 302927, 341946)
+update camrule set blocked = 0 where hmy in (342881, 302929, 328796, 336013, 302924, 302925, 302926, 302927, 341946)
+update camrule set hamendmentinactive = 0 where hamendment = 40308 and hchargecode in (27, 40)
+update camrule set dtto = '2034-10-31'where hmy = 342883
+update camrule set dtto = '2025-10-31'where hmy = 342881
+update camrule set dtto = dateadd(day, -1, dateadd(year, 1, dtfrom)) where hamendment = 40308 and hchargecode = 40 and hmy <> 342881
+update camrule set hTenant = NULL where hamendment = 40308
+update camrule set hTenant = NULL, hAmendmentInactive = 0 where hamendment = 42194
+update commschedule set dtTo = NULL, hAmendmentInactive = 0, bLocked = 0 where hmy in (216763, 216761, 231073)
+update commschedule set dtTo = '2034-10-31', hAmendmentInactive = 0 where hmy in (231298, 231296)
+update commschedule set bLocked = 0 where hmy = 231296
+update commschedule set htenant = NULL where hAmendment in (40308, 42194)
+update unitxref set dtLeaseTo = NULL, hAmendmentInactive = NULL, dtmoveout = NULL where hAmendment = 34225
+update unitxref set htenant = NULL, dtLeaseto = '2034-10-31', hAmendmentInactive = NULL, dtmoveout = NULL where hAmendment = 40308
+update unitxref set htenant = NULL where hAmendment = 42194
+update commamendments set istatus = 1, dtEnd = NULL, dtMoveOut = NULL, hAmendmentInactive = 0 where hmy = 34225
+update commamendments set iStatus = 0, iSequence = -1, dtAmendment = NULL, dtMoveOut = NULL, hAmendmentInactive = 0 where hmy = 40308 
+update commamendments set iStatus = 0, iSequence = -1, dtAmendment = NULL, hAmendmentModified = 34225 where hmy = 42194
+update commamendments set isequence = 1, bOngoingLease = -1 where hmy = 42195
+update tenant set sunitcode = '104', dtLeaseTo = NULL, hunit = 29401, putcode = 'k1tj495 104 t0021933' where hmyperson = 79974
+
+Go
+//End SQL
