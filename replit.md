@@ -59,11 +59,16 @@ Single-page application with:
 5. Formatted package is returned for download
 6. User activity is logged to `User_Logs.txt`
 
-## External Dependencies
+## Deployment to Vercel
 
-### Database
-- **Neon PostgreSQL**: Cloud-hosted PostgreSQL database for storing feedback submissions
-- Connection uses SSL with pooled connections
+To ensure the application works correctly on Vercel:
+
+1. **Database URL**: Set the `DATABASE_URL` environment variable in the Vercel dashboard to your Neon connection string.
+2. **Session Secret**: Set the `SESSION_SECRET` environment variable for Flask security.
+3. **Database Connectivity**: Since Vercel is serverless, the app uses SQLAlchemy with the Neon PostgreSQL database for persistent storage (Feedback and Usage Logs).
+4. **SSL Requirements**: Ensure the `DATABASE_URL` includes `?sslmode=require`.
+
+The core logic is optimized for serverless execution by avoiding local file writes where possible and using the cloud database for all stateful data.
 
 ### Python Packages
 - `Flask` - Web framework
