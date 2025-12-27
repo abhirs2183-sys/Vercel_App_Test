@@ -5,6 +5,8 @@ import pytz
 from flask import render_template, request, jsonify, send_file
 from app import app, db, Feedback, UsageLog
 
+from sql_processor import process_pkg_file
+
 def log_user_activity(created_by, case_id):
     """Log user activity to Database and User_Logs.txt"""
     # Database Log
