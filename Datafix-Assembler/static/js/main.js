@@ -61,7 +61,6 @@ function showNewYearModal() {
 
 document.addEventListener('DOMContentLoaded', function() {
     createSnowflakes();
-    showNewYearModal();
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
     const uploadArea = document.getElementById('uploadArea');
