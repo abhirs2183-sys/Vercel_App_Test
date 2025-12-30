@@ -1,4 +1,25 @@
+// Snowflake generation
+function createSnowflakes() {
+    const snowContainer = document.getElementById('snow');
+    if (!snowContainer) return;
+    
+    const snowflakeChars = ['❄', '❅', '❆', '✻', '✼'];
+    const count = 30;
+    
+    for (let i = 0; i < count; i++) {
+        const snowflake = document.createElement('div');
+        snowflake.className = 'snowflake';
+        snowflake.innerHTML = snowflakeChars[Math.floor(Math.random() * snowflakeChars.length)];
+        snowflake.style.left = Math.random() * 100 + 'vw';
+        snowflake.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        snowflake.style.animationDelay = (Math.random() * 20) + 's';
+        snowflake.style.fontSize = (Math.random() * 1 + 0.5) + 'em';
+        snowContainer.appendChild(snowflake);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    createSnowflakes();
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
     const uploadArea = document.getElementById('uploadArea');
