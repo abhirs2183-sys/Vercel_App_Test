@@ -34,13 +34,13 @@ function createSnowflakes() {
             const diffY = snowY - mouseY;
             const distance = Math.sqrt(diffX * diffX + diffY * diffY);
             
-            // Interaction radius: 150px
-            if (distance < 150) {
-                const power = (150 - distance) / 150;
-                const forceX = (diffX / distance) * power * 50; // Push intensity
-                const forceY = (diffY / distance) * power * 50;
+            // Interaction radius: 200px (increased)
+            if (distance < 200) {
+                const power = (200 - distance) / 200;
+                const forceX = (diffX / distance) * power * 80; // Increased intensity
+                const forceY = (diffY / distance) * power * 80;
                 
-                s.element.style.transition = 'transform 0.3s ease-out';
+                s.element.style.transition = 'transform 0.1s ease-out'; // Faster transition
                 s.element.style.transform = `translate(${forceX}px, ${forceY}px)`;
             } else {
                 s.element.style.transform = 'translate(0, 0)';
