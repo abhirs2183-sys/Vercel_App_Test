@@ -5,21 +5,63 @@ function createSnowflakes() {
     
     const snowflakeChars = ['❄', '❅', '❆', '✻', '✼'];
     const count = 30;
+    const snowflakes = [];
     
     for (let i = 0; i < count; i++) {
         const snowflake = document.createElement('div');
         snowflake.className = 'snowflake';
         snowflake.innerHTML = snowflakeChars[Math.floor(Math.random() * snowflakeChars.length)];
-        snowflake.style.left = Math.random() * 100 + 'vw';
+        const left = Math.random() * 100;
+        snowflake.style.left = left + 'vw';
         snowflake.style.animationDuration = (Math.random() * 10 + 10) + 's';
         snowflake.style.animationDelay = (Math.random() * 20) + 's';
         snowflake.style.fontSize = (Math.random() * 1 + 0.5) + 'em';
         snowContainer.appendChild(snowflake);
+        snowflakes.push({ element: snowflake, originalLeft: left });
     }
+
+    // Mouse reaction: Point 4
+    document.addEventListener('mousemove', (e) => {
+        const mouseX = e.clientX / window.innerWidth * 100;
+        snowflakes.forEach(s => {
+            const dist = mouseX - s.originalLeft;
+            if (Math.abs(dist) < 15) {
+                const shift = dist > 0 ? -2 : 2;
+                s.element.style.left = (s.originalLeft + shift) + 'vw';
+            } else {
+                s.element.style.left = s.originalLeft + 'vw';
+            }
+        });
+    });
+}
+
+// Modal handling: Point 5
+function showNewYearModal() {
+    if (localStorage.getItem('newYearGreetingShown')) return;
+
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.innerHTML = `
+        <div class="greeting-modal">
+            <h2>Happy New Year!</h2>
+            <p>Goodbye 2025, Hello 2026! We wish you a prosperous and productive year ahead. Thank you for being a part of yDatafix.</p>
+            <button class="close-modal">Get Started</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    setTimeout(() => modal.classList.add('active'), 100);
+
+    modal.querySelector('.close-modal').addEventListener('click', () => {
+        modal.classList.remove('active');
+        setTimeout(() => modal.remove(), 300);
+        localStorage.setItem('newYearGreetingShown', 'true');
+    });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     createSnowflakes();
+    showNewYearModal();
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
     const uploadArea = document.getElementById('uploadArea');
