@@ -20,16 +20,30 @@ function createSnowflakes() {
         snowflakes.push({ element: snowflake, originalLeft: left });
     }
 
-    // Mouse reaction: Point 4
+    // Mouse reaction: Point 4 - "Bust out" effect
     document.addEventListener('mousemove', (e) => {
-        const mouseX = e.clientX / window.innerWidth * 100;
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+        
         snowflakes.forEach(s => {
-            const dist = mouseX - s.originalLeft;
-            if (Math.abs(dist) < 15) {
-                const shift = dist > 0 ? -2 : 2;
-                s.element.style.left = (s.originalLeft + shift) + 'vw';
+            const rect = s.element.getBoundingClientRect();
+            const snowX = rect.left + rect.width / 2;
+            const snowY = rect.top + rect.height / 2;
+            
+            const diffX = snowX - mouseX;
+            const diffY = snowY - mouseY;
+            const distance = Math.sqrt(diffX * diffX + diffY * diffY);
+            
+            // Interaction radius: 150px
+            if (distance < 150) {
+                const power = (150 - distance) / 150;
+                const forceX = (diffX / distance) * power * 50; // Push intensity
+                const forceY = (diffY / distance) * power * 50;
+                
+                s.element.style.transition = 'transform 0.3s ease-out';
+                s.element.style.transform = `translate(${forceX}px, ${forceY}px)`;
             } else {
-                s.element.style.left = s.originalLeft + 'vw';
+                s.element.style.transform = 'translate(0, 0)';
             }
         });
     });
