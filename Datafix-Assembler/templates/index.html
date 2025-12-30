@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/new-year.css') }}">
 </head>
 <body class="dark-mode">
     <header class="header">
@@ -49,6 +50,7 @@
         </section>
 
         <section class="upload-section" id="upload-section">
+            <div id="snow-container"></div>
             <div class="section-badge"><i class="fas fa-upload"></i> Upload Tool</div>
             <h2 class="section-title">Create Your <span class="cyan">Package</span></h2>
             <p class="section-subtitle">Upload your .pkg file and get your processed package in seconds</p>
