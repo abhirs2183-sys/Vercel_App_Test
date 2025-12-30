@@ -11,8 +11,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/new-year.css') }}">
 </head>
 <body class="dark-mode">
+    <div class="new-year-background" id="snow"></div>
+    <div class="new-year-banner">
+        Goodbye, 2025. <span>Hello, 2026!</span> Happy New Year!
+    </div>
     <header class="header">
         <div class="header-left">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="yDatafix Logo" class="logo">
