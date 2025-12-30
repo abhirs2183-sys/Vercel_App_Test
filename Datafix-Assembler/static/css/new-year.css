@@ -1,7 +1,8 @@
 /* Scoped Snowflakes for Upload Section */
 .upload-section {
     position: relative;
-    overflow: hidden;
+    overflow: visible !important; /* Allow snowflakes to be seen if they drift slightly */
+    min-height: 400px;
 }
 
 #snow-container {
@@ -11,26 +12,23 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 1;
+    z-index: 10; /* Ensure it's above other elements */
 }
 
 .snowflake {
     position: absolute;
-    top: -10%;
+    top: -20px;
     user-select: none;
     cursor: default;
-    color: var(--snowflake-color, #72a1ed);
-    font-size: 1em;
-    opacity: 0.4;
+    color: #ffffff !important; /* Force white for visibility */
+    font-size: 1.5em; /* Make them slightly larger */
+    opacity: 0.8; /* Higher opacity */
     animation: fall linear infinite;
     transition: transform 0.2s ease-out;
-}
-
-[data-theme="dark"] .snowflake {
-    --snowflake-color: #ffffff;
+    text-shadow: 0 0 5px rgba(0,0,0,0.3); /* Add shadow for visibility on light backgrounds */
 }
 
 @keyframes fall {
-    0% { transform: translateY(-10%) rotate(0deg); }
-    100% { transform: translateY(110%) rotate(360deg); }
+    0% { transform: translateY(-20px) rotate(0deg); }
+    100% { transform: translateY(500px) rotate(360deg); }
 }

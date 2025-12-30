@@ -13,7 +13,7 @@ function initScopedSnow() {
         s.innerHTML = chars[Math.floor(Math.random() * chars.length)];
         const left = Math.random() * 100;
         s.style.left = left + '%';
-        s.style.animationDuration = (Math.random() * 5 + 5) + 's';
+        s.style.animationDuration = (Math.random() * 3 + 4) + 's'; // Faster fall
         s.style.animationDelay = (Math.random() * 5) + 's';
         container.appendChild(s);
         snowflakes.push({ el: s, x: left });
