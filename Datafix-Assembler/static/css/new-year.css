@@ -1,0 +1,65 @@
+/* New Year Snowflake Background - Formal Style */
+.new-year-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+    background: transparent;
+}
+
+.snowflake {
+    position: absolute;
+    top: -10%;
+    user-select: none;
+    cursor: default;
+    color: var(--snowflake-color);
+    font-size: 1.2em;
+    opacity: 0.3;
+    animation: fall linear infinite;
+    transition: left 0.5s ease-out; /* For mouse reaction */
+}
+
+:root {
+    --snowflake-color: #72a1ed; /* Light blue for light mode */
+    --festive-gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+}
+
+[data-theme="dark"] {
+    --snowflake-color: #ffffff; /* White for dark mode */
+    --festive-gradient: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+    100% {
+        transform: translateY(110vh) rotate(360deg);
+    }
+}
+
+/* Snowflake variations */
+.snowflake:nth-child(2n) { font-size: 0.8em; opacity: 0.2; animation-duration: 12s; }
+.snowflake:nth-child(3n) { font-size: 1.5em; opacity: 0.4; animation-duration: 8s; }
+.snowflake:nth-child(4n) { font-size: 1em; opacity: 0.25; animation-duration: 15s; }
+.snowflake:nth-child(5n) { font-size: 1.3em; opacity: 0.35; animation-duration: 10s; }
+
+/* New Year Banner - Formal */
+.new-year-banner {
+    text-align: center;
+    padding: 10px 0;
+    font-size: 0.9em;
+    font-weight: 500;
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+    background: var(--bg-secondary);
+}
+
+.new-year-banner span {
+    color: #3b82f6; /* Subtle brand blue */
+}

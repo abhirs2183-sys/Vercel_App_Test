@@ -11,8 +11,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/new-year.css') }}">
 </head>
 <body class="dark-mode">
+    <div class="new-year-background" id="snow"></div>
+    <div class="new-year-banner">
+        Goodbye, 2025. <span>Hello, 2026!</span> Happy New Year!
+    </div>
     <header class="header">
         <div class="header-left">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="yDatafix Logo" class="logo">
@@ -36,7 +41,7 @@
             <p class="hero-tagline">Package in seconds</p>
             <div class="hero-buttons">
                 <a href="#upload-section" class="btn btn-yellow"><i class="fas fa-plus-circle"></i> Create Package Now</a>
-                <a href="#" class="btn btn-outline" onclick="event.preventDefault();">Learn More</a>
+                <a href="#sample-download" class="btn btn-outline">Learn More</a>
             </div>
             <div class="scroll-indicator">
                 <i class="fas fa-chevron-down"></i>
@@ -71,7 +76,7 @@
             <div class="result" id="result" style="display: none;">
                 <div class="result-header">
                     <i class="fas fa-check-circle"></i>
-                    <h3>Package Generated Successfully!</h3>
+                    <h3>Happy New Year 2026 !!</h3>
                 </div>
                 <div class="result-filename" id="resultFilename"></div>
                 <button class="btn btn-yellow" id="downloadBtn"><i class="fas fa-download"></i> Download Package</button>
@@ -112,7 +117,7 @@
                         <span class="brand-tagline">Package in seconds</span>
                     </div>
                 </div>
-                <p class="footer-description">This professional SQL datafix generator is designed to simplify package creation for Yardi softwares, with instant processing at fingertips</p>
+                <p class="footer-description">This professional SQL datafix generator is designed to simplify package creation for Yardi softwares, with instant processing at fingertips.</p>
                 <div class="social-icons">
                     <a href="#" class="social-icon"><i class="fab fa-discord"></i></a>
                     <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
@@ -120,7 +125,7 @@
                     <a href="mailto:girirajpariks@gmail.com" class="social-icon"><i class="fas fa-envelope"></i></a>
                 </div>
             </div>
-            <div class="footer-sample">
+            <div class="footer-sample" id="sample-download">
                 <img src="{{ url_for('static', filename='images/sample-preview.png') }}" alt="Sample Input File Format" class="sample-preview-img">
                 <a href="{{ url_for('static', filename='SampleDatafix.pkg') }}" class="btn btn-yellow btn-small" download="SampleDatafix.pkg"><i class="fas fa-download"></i> Download sample input</a>
             </div>
@@ -131,7 +136,7 @@
                 <span class="footer-badge"><i class="fas fa-database"></i> MS SQL Server</span>
                 <span class="footer-badge"><i class="fas fa-check-circle"></i> Yardi Compatible</span>
             </div>
-            <p class="made-with">Developed by Giriraj Parik | Version 1.02</p>
+            <p class="made-with">Developed by Giriraj Parik | Version 2.00</p>
         </div>
     </footer>
 
