@@ -184,6 +184,19 @@ body.light-mode {
     margin-bottom: 1rem;
 }
 
+.cursor {
+    display: inline-block;
+    width: 2px;
+    animation: blink 1s step-end infinite;
+    color: var(--primary-cyan);
+    margin-left: 5px;
+}
+
+@keyframes blink {
+    from, to { opacity: 1; }
+    50% { opacity: 0; }
+}
+
 .cyan {
     color: var(--primary-cyan);
 }

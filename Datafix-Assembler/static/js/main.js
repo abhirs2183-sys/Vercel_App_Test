@@ -59,7 +59,75 @@ function showNewYearModal() {
     });
 }
 
+// Typing Animation Logic
+function initTypingAnimation() {
+    const element = document.getElementById('typing-text');
+    if (!element) return;
+
+    const phrases = [
+        'SQL Datafix<br><span class="cyan">Package Maker</span>',
+        'Happy New Year<br><span class="cyan">2026</span>'
+    ];
+    
+    let phraseIndex = 0;
+    let isDeleting = false;
+    let text = '';
+    let typeSpeed = 100;
+
+    function type() {
+        const currentPhrase = phrases[phraseIndex];
+        
+        if (isDeleting) {
+            const plainText = currentPhrase.replace(/<[^>]*>/g, '');
+            if (text.length > 0) {
+                text = plainText.substring(0, text.length - 1);
+                element.innerHTML = text + '<span class="cursor">|</span>';
+                typeSpeed = 50;
+            } else {
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                typeSpeed = 200;
+            }
+        } else {
+            const targetPlainText = currentPhrase.replace(/<[^>]*>/g, '');
+            if (text.length < targetPlainText.length) {
+                text = targetPlainText.substring(0, text.length + 1);
+                
+                let htmlOutput = '';
+                let plainCounter = 0;
+                let inTag = false;
+                
+                for(let i=0; i < currentPhrase.length; i++) {
+                    if (currentPhrase[i] === '<') inTag = true;
+                    if (inTag) {
+                        htmlOutput += currentPhrase[i];
+                        if (currentPhrase[i] === '>') inTag = false;
+                    } else {
+                        if (plainCounter < text.length) {
+                            htmlOutput += currentPhrase[i];
+                            plainCounter++;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                
+                element.innerHTML = htmlOutput + '<span class="cursor">|</span>';
+                typeSpeed = 100;
+            } else {
+                typeSpeed = 2000;
+                isDeleting = true;
+            }
+        }
+        
+        setTimeout(type, typeSpeed);
+    }
+
+    type();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    initTypingAnimation();
     createSnowflakes();
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
