@@ -40,7 +40,7 @@ def upload_file():
     if file.filename == '':
         return jsonify({'error': 'No file selected'}), 400
     
-    if not file.filename.endswith('.pkg'):
+    if not file.filename or not file.filename.endswith('.pkg'):
         return jsonify({'error': 'Only .pkg files are accepted'}), 400
     
     try:
@@ -51,8 +51,10 @@ def upload_file():
             return jsonify({'error': result['error']}), 400
         
         # Log user activity
-        if 'created_by' in result and 'case_id' in result:
+        if result.get('created_by') and result.get('case_id'):
             log_user_activity(result['created_by'], result['case_id'])
+        else:
+            logging.warning(f"Metadata missing for logging: created_by={result.get('created_by')}, case_id={result.get('case_id')}")
         
         return jsonify({
             'success': True,
