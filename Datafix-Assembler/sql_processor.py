@@ -286,46 +286,57 @@ def generate_update_backup(query, case_id):
 #     return None
 
 
-def extract_update_table_info(query):  #edited
-    query_single = ' '.join(query.split())  #edited
-    # --- 1. locate UPDATE <table> SET --- #edited
-    m = re.search(r'update\s+(\w+)\s+set\s+', query_single,
-                  re.IGNORECASE)  #edited
-    if not m:  #edited
-        return None  #edited
+def extract_update_table_info(query):
+    query_single = ' '.join(query.split())
 
+    # --- 1. locate UPDATE <table> SET ---
+    m = re.search(r'update\s+(\w+)\s+set\s+', query_single, re.IGNORECASE)
+    if not m:
+        return None
 
-#edited
-    table_name = m.group(1)  #edited
-    set_start = m.end()  #edited
-    #edited
-    # --- 2. find WHERE at depth 0 (not inside parentheses) --- #edited
-    depth = 0  #edited
-    where_pos = None  #edited
-    #edited
-    for i in range(set_start, len(query_single)):  #edited
-        c = query_single[i]  #edited
-        if c == '(':  #edited
-            depth += 1  #edited
-        elif c == ')':  #edited
-            depth -= 1  #edited
-        elif depth == 0 and query_single[i:i + 6].lower() == 'where ':  #edited
-            where_pos = i  #edited
-            break  #edited
-    #edited
-    if where_pos is None:  #edited
-        # no WHERE found at depth 0 → no outer WHERE #edited
-        set_clause = query_single[set_start:].strip()  #edited
-        where_clause = ''  #edited
-    else:  #edited
-        set_clause = query_single[set_start:where_pos].strip()  #edited
-        where_clause = query_single[where_pos:].strip()  #edited
-    #edited
-    return {  #edited
-        'table_name': table_name,  #edited
-        'set_clause': set_clause,  #edited
-        'where_clause': where_clause  #edited
-    }  #edited
+    table_name = m.group(1)
+    set_start = m.end()
+
+    # --- 2. find FROM or WHERE at depth 0 ---
+    depth = 0
+    from_pos = None
+    where_pos = None
+
+    for i in range(set_start, len(query_single)):
+        c = query_single[i]
+        if c == '(':
+            depth += 1
+        elif c == ')':
+            depth -= 1
+        elif depth == 0:
+            if query_single[i:i+5].lower() == 'from ':
+                from_pos = i
+                break
+            elif query_single[i:i+6].lower() == 'where ':
+                where_pos = i
+                break
+
+    if from_pos is not None:
+        set_clause = query_single[set_start:from_pos].strip()
+        where_clause = query_single[from_pos:].strip()
+
+        # ✅ REMOVE FIRST TWO WORDS: "from <table>"
+        parts = where_clause.split(None, 2)
+        if len(parts) >= 3:
+            where_clause = parts[2]
+
+    elif where_pos is not None:
+        set_clause = query_single[set_start:where_pos].strip()
+        where_clause = query_single[where_pos:].strip()
+    else:
+        set_clause = query_single[set_start:].strip()
+        where_clause = ''
+
+    return {
+        'table_name': table_name,
+        'set_clause': set_clause,
+        'where_clause': where_clause
+    }
 
 
 def parse_set_clause(set_clause):
