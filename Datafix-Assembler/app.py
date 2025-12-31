@@ -12,8 +12,8 @@ app.secret_key = os.environ.get("SESSION_SECRET")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # Database Configuration
-# Using environment variable for database URL, with the Neon URL as fallback
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", "postgresql://neondb_owner:npg_UVHTjef6Yv4D@ep-still-waterfall-a1jmfw19-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require")
+# Explicitly using the Neon URL provided by the user
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://neondb_owner:npg_UVHTjef6Yv4D@ep-still-waterfall-a1jmfw19-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
