@@ -20,7 +20,8 @@ db = SQLAlchemy(app)
 
 # Define Feedback model
 class Feedback(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    __tablename__ = 'feedback'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     case_number = db.Column(db.String(50), nullable=True)
     feedback_text = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
@@ -29,7 +30,8 @@ class Feedback(db.Model):
         super(Feedback, self).__init__(**kwargs)
 
 class UsageLog(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    __tablename__ = 'usage_log'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     created_by = db.Column(db.String(100), nullable=False)
     case_id = db.Column(db.String(50), nullable=False)
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())

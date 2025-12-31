@@ -15,6 +15,7 @@ def log_user_activity(created_by, case_id):
         db.session.add(new_log)
         db.session.commit()
     except Exception as e:
+        db.session.rollback()
         logging.error(f"Failed to save usage log to database: {str(e)}")
 
     # File Log fallback
@@ -51,10 +52,13 @@ def upload_file():
             return jsonify({'error': result['error']}), 400
         
         # Log user activity
-        if result.get('created_by') and result.get('case_id'):
-            log_user_activity(result['created_by'], result['case_id'])
-        else:
-            logging.warning(f"Metadata missing for logging: created_by={result.get('created_by')}, case_id={result.get('case_id')}")
+        try:
+            if result.get('created_by') and result.get('case_id'):
+                log_user_activity(result['created_by'], result['case_id'])
+            else:
+                logging.warning(f"Metadata missing for logging: created_by={result.get('created_by')}, case_id={result.get('case_id')}")
+        except Exception as log_err:
+            logging.error(f"Activity logging failed: {str(log_err)}")
         
         return jsonify({
             'success': True,
@@ -83,6 +87,7 @@ def submit_feedback():
         db.session.add(new_feedback)
         db.session.commit()
     except Exception as e:
+        db.session.rollback()
         logging.error(f"Failed to save feedback to database: {str(e)}")
     
     ist = pytz.timezone('Asia/Kolkata')
