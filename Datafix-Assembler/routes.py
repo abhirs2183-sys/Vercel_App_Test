@@ -3,7 +3,7 @@ import logging
 from datetime import datetime
 import pytz
 from flask import render_template, request, jsonify, send_file
-from app import app, db, Feedback, UsageLog
+from app import app, db, Feedback, UsageLog, get_ist_now
 
 from sql_processor import process_pkg_file
 
@@ -11,7 +11,7 @@ def log_user_activity(created_by, case_id):
     """Log user activity to Database and User_Logs.txt"""
     # Database Log
     try:
-        new_log = UsageLog(created_by=created_by, case_id=case_id)
+        new_log = UsageLog(created_by=created_by, case_id=case_id, timestamp=get_ist_now())
         db.session.add(new_log)
         db.session.commit()
     except Exception as e:
@@ -83,7 +83,7 @@ def submit_feedback():
     
     # Save to Database
     try:
-        new_feedback = Feedback(case_number=case_number, feedback_text=feedback_text)
+        new_feedback = Feedback(case_number=case_number, feedback_text=feedback_text, timestamp=get_ist_now())
         db.session.add(new_feedback)
         db.session.commit()
     except Exception as e:
