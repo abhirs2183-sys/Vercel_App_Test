@@ -11,7 +11,8 @@ def log_user_activity(created_by, case_id):
     """Log user activity to Database and User_Logs.txt"""
     # Database Log
     try:
-        new_log = UsageLog(created_by=created_by, case_id=case_id, timestamp=get_ist_now())
+        ist_now = get_ist_now()
+        new_log = UsageLog(created_by=created_by, case_id=case_id, timestamp=ist_now)
         db.session.add(new_log)
         db.session.commit()
     except Exception as e:
@@ -19,9 +20,8 @@ def log_user_activity(created_by, case_id):
         logging.error(f"Failed to save usage log to database: {str(e)}")
 
     # File Log fallback
-    ist = pytz.timezone('Asia/Kolkata')
-    timestamp = datetime.now(ist).strftime('%Y-%m-%d %H:%M:%S IST')
-    log_entry = f"Created by: {created_by} | Case#: {case_id} | Timestamp: {timestamp}\n"
+    timestamp_str = ist_now.strftime('%Y-%m-%d %H:%M:%S IST')
+    log_entry = f"Created by: {created_by} | Case#: {case_id} | Timestamp: {timestamp_str}\n"
     try:
         with open('User_Logs.txt', 'a', encoding='utf-8') as f:
             f.write(log_entry)

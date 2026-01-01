@@ -10,7 +10,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 logging.basicConfig(level=logging.DEBUG)
 
 def get_ist_now():
-    return datetime.now(pytz.timezone('Asia/Kolkata'))
+    return datetime.now(pytz.timezone('Asia/Kolkata')).replace(tzinfo=None)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET")
@@ -29,7 +29,7 @@ class Feedback(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     case_number = db.Column(db.String(50), nullable=True)
     feedback_text = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=get_ist_now)
+    timestamp = db.Column(db.DateTime(timezone=False), default=get_ist_now)
 
     def __init__(self, **kwargs):
         super(Feedback, self).__init__(**kwargs)
@@ -39,7 +39,7 @@ class UsageLog(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     created_by = db.Column(db.String(100), nullable=False)
     case_id = db.Column(db.String(50), nullable=False)
-    timestamp = db.Column(db.DateTime, default=get_ist_now)
+    timestamp = db.Column(db.DateTime(timezone=False), default=get_ist_now)
 
     def __init__(self, **kwargs):
         super(UsageLog, self).__init__(**kwargs)
