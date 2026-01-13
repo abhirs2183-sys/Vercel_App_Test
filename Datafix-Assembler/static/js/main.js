@@ -127,8 +127,8 @@ function initTypingAnimation() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    initTypingAnimation();
-    createSnowflakes();
+    // initTypingAnimation(); // Removed for static text
+    // createSnowflakes(); // Removed for new year
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
     const uploadArea = document.getElementById('uploadArea');
