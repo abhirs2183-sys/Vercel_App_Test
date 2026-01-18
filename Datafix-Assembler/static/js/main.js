@@ -138,6 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const error = document.getElementById('error');
     const resultFilename = document.getElementById('resultFilename');
     const downloadBtn = document.getElementById('downloadBtn');
+    const resetBtn = document.getElementById('resetBtn');
     const feedbackText = document.getElementById('feedbackText');
     const submitFeedback = document.getElementById('submitFeedback');
     const feedbackSuccess = document.getElementById('feedbackSuccess');
@@ -266,6 +267,18 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 validationMessage.style.display = 'none';
             }, 5000);
+        }
+    });
+
+    resetBtn.addEventListener('click', function() {
+        result.style.display = 'none';
+        uploadArea.style.display = 'block';
+        fileInput.value = '';
+        generatedContent = '';
+        generatedFilename = '';
+        const validationMessage = document.getElementById('validationMessage');
+        if (validationMessage) {
+            validationMessage.style.display = 'none';
         }
     });
 
