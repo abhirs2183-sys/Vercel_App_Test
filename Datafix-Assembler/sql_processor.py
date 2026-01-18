@@ -22,7 +22,7 @@ def process_pkg_file(content):
         return metadata
     #log_usage(metadata['created_by'], metadata['case_id'])  #edited
     sql_queries = extract_sql_queries(lines)
-    if not sql_queries:
+    if not sql_queries[0]:
         return {'error': 'No SQL queries found in the file'}
 
     output = generate_output(metadata, sql_queries)
@@ -104,6 +104,8 @@ def extract_sql_queries(lines):
     queries = []
     current_query_lines = []
     in_query = False
+    blank_pos_set = {-1}
+    first_query_pos = -1
 
     metadata_prefixes = [
         'created by', 'case#', 'case #', 'client pin', 'client name',
@@ -111,9 +113,13 @@ def extract_sql_queries(lines):
     ]
 
     for i, line in enumerate(lines):
-        # We need to preserve the original line for the query content
         line_stripped = line.strip()
         line_lower = line_stripped.lower()
+
+        if (first_query_pos == -1 and in_query):
+            first_query_pos = i - 1
+        if (line_lower == '' and first_query_pos != -1):
+            blank_pos_set.add(i - first_query_pos)
 
         is_metadata = any(
             line_lower.startswith(prefix) for prefix in metadata_prefixes)
@@ -122,23 +128,21 @@ def extract_sql_queries(lines):
 
         if is_sql_statement_start(line_stripped):
             if current_query_lines:
-                query_text = '\n'.join(current_query_lines).rstrip()
+                query_text = '\n'.join(current_query_lines).strip()
                 if query_text:
                     queries.append(query_text)
                 current_query_lines = []
-            current_query_lines.append(line)
+            current_query_lines.append(line_stripped)
             in_query = True
-        elif in_query:
-            # Check if this is a blank line or starts with metadata (though metadata should be caught above)
-            # We want to keep blank lines within the query if they exist
-            current_query_lines.append(line)
+        elif in_query and line_stripped:
+            current_query_lines.append(line_stripped)
 
     if current_query_lines:
-        query_text = '\n'.join(current_query_lines).rstrip()
+        query_text = '\n'.join(current_query_lines).strip()
         if query_text:
             queries.append(query_text)
 
-    return queries
+    return queries, blank_pos_set
 
 
 def is_sql_statement_start(line):
@@ -203,7 +207,7 @@ def generate_output(metadata, sql_queries):
 
     delete_table_counts = {}
 
-    for query in sql_queries:
+    for query in sql_queries[0]:
         query_type = get_query_type(query)
 
         if query_type == 'UPDATE':
@@ -226,8 +230,15 @@ def generate_output(metadata, sql_queries):
                     output_lines.append('')
 
     output_lines.append('GO')
-    for query in sql_queries:
+    query_pos = 0
+    for query in sql_queries[0]:
+
+        while (query_pos in sql_queries[1]):
+            output_lines.append('')
+            query_pos += 1
+
         output_lines.append(query)
+        query_pos += 1
 
     output_lines.append('Go')
     output_lines.append('//End SQL')
@@ -298,11 +309,10 @@ def generate_update_backup(query, case_id):
 
 
 def extract_update_table_info(query):
-    # Preserve original formatting by not collapsing whitespace with ' '.join(query.split())
-    # Instead, we'll use regex that handles multiple spaces/newlines
-    
+    query_single = ' '.join(query.split())
+
     # --- 1. locate UPDATE <table> SET ---
-    m = re.search(r'update\s+(\w+)\s+set\s+', query, re.IGNORECASE | re.DOTALL)
+    m = re.search(r'update\s+(\w+)\s+set\s+', query_single, re.IGNORECASE)
     if not m:
         return None
 
@@ -314,29 +324,29 @@ def extract_update_table_info(query):
     from_pos = None
     where_pos = None
 
-    for i in range(set_start, len(query)):
-        c = query[i]
+    for i in range(set_start, len(query_single)):
+        c = query_single[i]
         if c == '(':
             depth += 1
         elif c == ')':
             depth -= 1
         elif depth == 0:
-            if query[i:i + 5].lower() == 'from ' or query[i:i+5].lower() == 'from\n' or query[i:i+5].lower() == 'from\r':
+            if query_single[i:i + 5].lower() == 'from ':
                 from_pos = i
                 break
-            elif query[i:i + 6].lower() == 'where ' or query[i:i+6].lower() == 'where\n' or query[i:i+6].lower() == 'where\r':
+            elif query_single[i:i + 6].lower() == 'where ':
                 where_pos = i
                 break
 
     if from_pos is not None:
-        set_clause = query[set_start:from_pos].strip()
-        where_clause = query[from_pos:].strip()
+        set_clause = query_single[set_start:from_pos].strip()
+        where_clause = query_single[from_pos:].strip()
 
     elif where_pos is not None:
-        set_clause = query[set_start:where_pos].strip()
-        where_clause = query[where_pos:].strip()
+        set_clause = query_single[set_start:where_pos].strip()
+        where_clause = query_single[where_pos:].strip()
     else:
-        set_clause = query[set_start:].strip()
+        set_clause = query_single[set_start:].strip()
         where_clause = ''
 
     return {
