@@ -275,7 +275,7 @@ def generate_update_backup(query, case_id):
     for col_name, new_value in column_updates:
         col_name_ = col_name.split(".")[-1] if "." in col_name else col_name
         stmt = f"Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)\n"
-        stmt += f"(Select '{case_id}', '{table_name}', '{col_name_}', {fk_column}, 'Updating {col_name}', {new_value}, {col_name}, getdate() \n"
+        stmt += f"(Select '{case_id}', '{table_name}', '{col_name_}', {fk_column}, 'Updating {col_name_}', {new_value}, {col_name}, getdate() \n"
         stmt += f"from {table_name}"
         if where_clause:
             stmt += f" {where_clause}"
