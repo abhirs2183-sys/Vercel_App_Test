@@ -271,12 +271,26 @@ def generate_update_backup(query, case_id):
     column_updates = parse_set_clause(set_clause)
 
     fk_column = get_foreign_key_column(table_name)
+    
+    if (where_clause[0] == 'f' or where_clause[0] == 'F'):
+        where_list = where_clause.lower().split()
+        tbn = table_name.lower()
+        index = where_list.index(tbn)
+        ln = len(where_list)
+        alias_name = tbn
+        if (index + 2 < ln and where_list[index + 1] == 'as'):
+            alias_name = where_list[index + 2]
+        elif (index + 1 < ln and where_list[index + 1] != 'on' and where_list[index + 1] != 'inner' and where_list[index + 1] != 'left' and where_list[index + 1] != 'right' and where_list[index + 1] != 'outer' and where_list[index + 1] != 'join' and where_list[index + 1] != 'full'):
+            alias_name = where_list[index + 1]
+        fk_column = f"{alias_name}.{fk_column}"
 
     for col_name, new_value in column_updates:
         col_name_ = col_name.split(".")[-1] if "." in col_name else col_name
         stmt = f"Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)\n"
         stmt += f"(Select '{case_id}', '{table_name}', '{col_name_}', {fk_column}, 'Updating {col_name_}', {new_value}, {col_name}, getdate() \n"
-        stmt += f"from {table_name}"
+        
+        if(where_clause[0] != 'f' and where_clause[0] != 'F'):
+            stmt += f"from {table_name}"
         if where_clause:
             stmt += f" {where_clause}"
         stmt += "\n)"
