@@ -342,6 +342,17 @@ def extract_update_table_info(query):
         set_clause = query_single[set_start:from_pos].strip()
         where_clause = query_single[from_pos:].strip()
 
+        where_clause_list = where_clause.lower().split()
+        tn = table_name.lower()
+        if tn in where_clause_list:
+            index = where_clause_list.index(tn)
+            if (index > 0 and where_clause_list[index - 1] != 'join'
+                    and where_clause_list[index - 1] != 'from'):
+                if (where_clause_list[index - 1] == 'as' and index > 1):
+                    table_name = where_clause_list[index - 2]
+                elif (where_clause_list[index - 1] != 'as'):
+                    table_name = where_clause_list[index - 1]
+
     elif where_pos is not None:
         set_clause = query_single[set_start:where_pos].strip()
         where_clause = query_single[where_pos:].strip()
@@ -423,7 +434,7 @@ def smart_split_set_clause(set_clause):
 
 def get_foreign_key_column(table_name):
     table_lower = table_name.lower()
-    if table_lower == 'tenant':
+    if table_lower == 'tenant' or table_lower == 'vendor':
         return 'hmyperson'
     return 'hmy'
 
