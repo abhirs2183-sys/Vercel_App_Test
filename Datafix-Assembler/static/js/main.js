@@ -208,6 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // Reset UI for new attempt
         uploadArea.style.display = 'none';
         result.style.display = 'none';
         error.style.display = 'none';
@@ -247,6 +248,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const errorMessage = document.getElementById('errorMessage');
         errorMessage.textContent = message;
         error.style.display = 'flex';
+        // Allow re-uploading the same file after correcting it
+        fileInput.value = '';
     }
 
     downloadBtn.addEventListener('click', function() {

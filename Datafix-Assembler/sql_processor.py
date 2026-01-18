@@ -47,6 +47,8 @@ def parse_metadata(lines):
         'db_name': ''
     }
 
+    db_parts = ''
+
     for line in lines:
         line_stripped = line.strip()
         if not line_stripped:
@@ -79,9 +81,15 @@ def parse_metadata(lines):
                 metadata['db_name'] = db_parts[0]
 
     if not metadata['case_id']:
-        return {'error': 'Case# not found in the input file'}
+        return {'error': 'Case ID not found in the input file'}
     if not metadata['created_by']:
         return {'error': 'Created By not found in the input file'}
+    if not metadata['client_pin']:
+        return {'error': 'Client Pin not found in the input file'}
+    if not metadata['client_name']:
+        return {'error': 'Client Name not found in the input file'}
+    if len(db_parts) != 4:
+        return {'error': 'Incomplete/Missing DB Credentials'}
 
     return metadata
 
@@ -309,21 +317,16 @@ def extract_update_table_info(query):
         elif c == ')':
             depth -= 1
         elif depth == 0:
-            if query_single[i:i+5].lower() == 'from ':
+            if query_single[i:i + 5].lower() == 'from ':
                 from_pos = i
                 break
-            elif query_single[i:i+6].lower() == 'where ':
+            elif query_single[i:i + 6].lower() == 'where ':
                 where_pos = i
                 break
 
     if from_pos is not None:
         set_clause = query_single[set_start:from_pos].strip()
         where_clause = query_single[from_pos:].strip()
-
-        # ✅ REMOVE FIRST TWO WORDS: "from <table>"
-        parts = where_clause.split(None, 2)
-        if len(parts) >= 3:
-            where_clause = parts[2]
 
     elif where_pos is not None:
         set_clause = query_single[set_start:where_pos].strip()
