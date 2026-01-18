@@ -174,9 +174,9 @@ def generate_output(metadata, sql_queries):
     #output_lines.append(f"Created By        : {metadata['created_by']}")
     #output_lines.append(f"Date              : {current_date}")
     #output_lines.append(f"Case#             : {metadata['case_id']}")
-    output_lines.append(f"Created By      : {metadata['created_by']}")  #edited
-    output_lines.append(f"Date            : {current_date}")  #edited
-    output_lines.append(f"Case#           : {metadata['case_id']}")  #edited
+    output_lines.append(f"Created By     : {metadata['created_by']}")  #edited
+    output_lines.append(f"Date           : {current_date}")  #edited
+    output_lines.append(f"Case#          : {metadata['case_id']}")  #edited
     output_lines.append('//End Notes')
     output_lines.append('')
     output_lines.append('')
@@ -273,8 +273,9 @@ def generate_update_backup(query, case_id):
     fk_column = get_foreign_key_column(table_name)
 
     for col_name, new_value in column_updates:
+        col_name_ = col_name.split(".")[-1] if "." in col_name else col_name
         stmt = f"Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)\n"
-        stmt += f"(Select '{case_id}', '{table_name}','{col_name}',{fk_column}, 'Updating {col_name}',{new_value},{col_name}, getdate() \n"
+        stmt += f"(Select '{case_id}', '{table_name}', '{col_name_}', {fk_column}, 'Updating {col_name}', {new_value}, {col_name}, getdate() \n"
         stmt += f"from {table_name}"
         if where_clause:
             stmt += f" {where_clause}"
