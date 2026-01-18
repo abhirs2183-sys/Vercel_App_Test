@@ -591,6 +591,7 @@ body.light-mode {
     color: var(--accent-yellow);
     margin-top: 1rem;
     font-weight: 500;
+    white-space: nowrap;
 }
 
 .footer {
