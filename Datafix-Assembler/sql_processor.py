@@ -289,7 +289,7 @@ def generate_update_backup(query, case_id):
         stmt = f"Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)\n"
         stmt += f"(Select '{case_id}', '{table_name}', '{col_name_}', {fk_column}, 'Updating {col_name_}', {new_value}, {col_name}, getdate() \n"
         
-        if(where_clause[0] != 'f' and where_clause[0] != 'F'):
+        if(where_clause and where_clause[0] != 'f' and where_clause[0] != 'F'):
             stmt += f"from {table_name}"
         if where_clause:
             stmt += f" {where_clause}"
@@ -457,16 +457,27 @@ def get_foreign_key_column(table_name):
 def generate_delete_backup(query, case_id, table_name, count):
     statements = []
 
-    where_match = re.search(r'where\s+(.+)$', query, re.IGNORECASE | re.DOTALL)
-    where_clause = where_match.group(1).strip() if where_match else ''
+    where_match = re.search(r'\bfrom\b.*$', query, re.IGNORECASE | re.DOTALL)
+    where_clause = where_match.group(0) if where_match else ''
 
     fk_column = get_foreign_key_column(table_name)
+    alias_name = table_name
+    if (where_clause[0] == 'f' or where_clause[0] == 'F'):
+        where_list = where_clause.lower().split()
+        tbn = table_name.lower()
+        index = where_list.index(tbn)
+        ln = len(where_list)
+        alias_name = tbn
+        if (index + 2 < ln and where_list[index + 1] == 'as'):
+            alias_name = where_list[index + 2]
+        elif (index + 1 < ln and where_list[index + 1] != 'on' and where_list[index + 1] != 'inner' and where_list[index + 1] != 'left' and where_list[index + 1] != 'right' and where_list[index + 1] != 'outer' and where_list[index + 1] != 'join' and where_list[index + 1] != 'full' and where_list[index + 1] != 'where'):
+            alias_name = where_list[index + 1]
+        fk_column = f"{alias_name}.{fk_column}"
 
     stmt = f"Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)\n"
     stmt += f"(Select '{case_id}', '{table_name}','',{fk_column}, 'Deleting records','','', getdate() \n"
-    stmt += f"from {table_name}"
     if where_clause:
-        stmt += f" where {where_clause}"
+        stmt += f" {where_clause}"
     stmt += "\n)"
     statements.append(stmt)
 
@@ -475,9 +486,9 @@ def generate_delete_backup(query, case_id, table_name, count):
     else:
         backup_table = f"{table_name}_{count}_{case_id}"
 
-    backup_stmt = f"select * into {backup_table} from {table_name}"
+    backup_stmt = f"select {alias_name}.* into {backup_table}"
     if where_clause:
-        backup_stmt += f" where {where_clause}"
+        backup_stmt += f" {where_clause}"
     statements.append(backup_stmt)
 
     return statements
@@ -486,6 +497,26 @@ def generate_delete_backup(query, case_id, table_name, count):
 def extract_table_from_delete(query):
     pattern = r'delete\s+(?:from\s+)?(\w+)'
     match = re.search(pattern, query, re.IGNORECASE)
+    table_name = ''
     if match:
-        return match.group(1)
+        table_name = match.group(1)
+    else:
+        table_name = ''
+        
+    where_match = re.search(r'\bfrom\b.*$', query, re.IGNORECASE | re.DOTALL)
+    where_clause = where_match.group(0) if where_match else ''
+
+    where_clause_list = where_clause.lower().split()
+    tn = table_name.lower()
+    if tn in where_clause_list:
+        index = where_clause_list.index(tn)
+        if (index > 0 and where_clause_list[index - 1] != 'join'
+                and where_clause_list[index - 1] != 'from'):
+            if (where_clause_list[index - 1] == 'as' and index > 1):
+                table_name = where_clause_list[index - 2]
+            elif (where_clause_list[index - 1] != 'as'):
+                table_name = where_clause_list[index - 1]
+
+    if match:
+        return table_name
     return None
