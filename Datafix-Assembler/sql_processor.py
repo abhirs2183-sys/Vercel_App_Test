@@ -485,8 +485,12 @@ def generate_delete_backup(query, case_id, table_name, count):
         backup_table = f"{table_name}_{case_id}"
     else:
         backup_table = f"{table_name}_{count}_{case_id}"
-
-    backup_stmt = f"select {alias_name}.* into {backup_table}"
+        
+    if(where_clause and ('join' in where_clause)):
+        backup_stmt = f"select {alias_name}.* into {backup_table}"
+    else:
+        backup_stmt = f"select * into {backup_table}"
+        
     if where_clause:
         backup_stmt += f" {where_clause}"
     statements.append(backup_stmt)
