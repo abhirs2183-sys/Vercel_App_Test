@@ -336,9 +336,10 @@ def generate_update_backup(query, case_id):
         alias_name = tbn
         if (index + 2 < ln and where_list[index + 1] == 'as'):
             alias_name = where_list[index + 2]
-        elif (index + 1 < ln and where_list[index + 1] != 'on' and where_list[index + 1] != 'inner' and where_list[index + 1] != 'left' and where_list[index + 1] != 'right' and where_list[index + 1] != 'outer' and where_list[index + 1] != 'join' and where_list[index + 1] != 'full'):
+        elif (index + 1 < ln and where_list[index + 1] != 'on' and where_list[index + 1] != 'inner' and where_list[index + 1] != 'left' and where_list[index + 1] != 'right' and where_list[index + 1] != 'outer' and where_list[index + 1] != 'join' and where_list[index + 1] != 'full' and where_list[index + 1] != 'from' and where_list[index + 1] != 'where'):
             alias_name = where_list[index + 1]
-        fk_column = f"{alias_name}.{fk_column}"
+        if(where_clause and ('join' in where_clause)):
+            fk_column = f"{alias_name}.{fk_column}"
 
     for col_name, new_value in column_updates:
         col_name_ = col_name.split(".")[-1] if "." in col_name else col_name
@@ -533,9 +534,10 @@ def generate_delete_backup(query, case_id, table_name, count):
         alias_name = tbn
         if (index + 2 < ln and where_list[index + 1] == 'as'):
             alias_name = where_list[index + 2]
-        elif (index + 1 < ln and where_list[index + 1] != 'on' and where_list[index + 1] != 'inner' and where_list[index + 1] != 'left' and where_list[index + 1] != 'right' and where_list[index + 1] != 'outer' and where_list[index + 1] != 'join' and where_list[index + 1] != 'full' and where_list[index + 1] != 'where'):
+        elif (index + 1 < ln and where_list[index + 1] != 'on' and where_list[index + 1] != 'inner' and where_list[index + 1] != 'left' and where_list[index + 1] != 'right' and where_list[index + 1] != 'outer' and where_list[index + 1] != 'join' and where_list[index + 1] != 'full' and where_list[index + 1] != 'where' and where_list[index + 1] != 'from'):
             alias_name = where_list[index + 1]
-        fk_column = f"{alias_name}.{fk_column}"
+        if(where_clause and ('join' in where_clause)):
+            fk_column = f"{alias_name}.{fk_column}"
 
     stmt = f"Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)\n"
     stmt += f"(Select '{case_id}', '{table_name}','',{fk_column}, 'Deleting records','','', getdate() \n"
