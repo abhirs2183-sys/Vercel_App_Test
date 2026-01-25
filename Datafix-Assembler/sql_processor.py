@@ -13,6 +13,61 @@ def log_usage(created_by, case_id):  #edited
             f"{datetime.now()} | Created By: {created_by} | Case#: {case_id}\n"
         )  #edited
 
+def split_where_clause(s):
+    result = []
+    token = ""
+
+    in_quotes = False
+    bracket_depth = 0
+
+    for ch in s:
+        # Handle quotes (only outside brackets)
+        if ch == '"' and bracket_depth == 0:
+            if(not in_quotes and token):
+                result.append(token)
+                token = ""
+            in_quotes = not in_quotes
+            token += ch
+
+            # quote just CLOSED → flush token
+            if not in_quotes:
+                result.append(token)
+                token = ""
+            continue
+
+        # Handle opening bracket
+        if ch == '[' and not in_quotes:
+            if(bracket_depth == 0 and token):
+                result.append(token)
+                token = ""
+            bracket_depth += 1
+            token += ch
+            continue
+
+        # Handle closing bracket
+        if ch == ']' and not in_quotes:
+            bracket_depth -= 1
+            token += ch
+
+            # outermost bracket just CLOSED → flush token
+            if bracket_depth == 0:
+                result.append(token)
+                token = ""
+            continue
+
+        # Space splits only when fully free
+        if ch == ' ' and not in_quotes and bracket_depth == 0:
+            if token:
+                result.append(token)
+                token = ""
+        else:
+            token += ch
+
+    # Safety flush
+    if token:
+        result.append(token)
+
+    return result
 
 def process_pkg_file(content):
     lines = content.strip().split('\n')
@@ -273,7 +328,8 @@ def generate_update_backup(query, case_id):
     fk_column = get_foreign_key_column(table_name)
     
     if (where_clause[0] == 'f' or where_clause[0] == 'F'):
-        where_list = where_clause.lower().split()
+        where_list = where_clause.lower()
+        where_list = split_where_clause(where_list)
         tbn = table_name.lower()
         index = where_list.index(tbn)
         ln = len(where_list)
@@ -357,7 +413,8 @@ def extract_update_table_info(query):
         set_clause = query_single[set_start:from_pos].strip()
         where_clause = query_single[from_pos:].strip()
 
-        where_clause_list = where_clause.lower().split()
+        where_clause_list = where_clause.lower()
+        where_clause_list = split_where_clause(where_clause_list)
         tn = table_name.lower()
         if tn in where_clause_list:
             index = where_clause_list.index(tn)
@@ -456,14 +513,20 @@ def get_foreign_key_column(table_name):
 
 def generate_delete_backup(query, case_id, table_name, count):
     statements = []
-
+    Trd_word_from = False
+    
     where_match = re.search(r'\bfrom\b.*$', query, re.IGNORECASE | re.DOTALL)
     where_clause = where_match.group(0) if where_match else ''
 
     fk_column = get_foreign_key_column(table_name)
     alias_name = table_name
     if (where_clause[0] == 'f' or where_clause[0] == 'F'):
-        where_list = where_clause.lower().split()
+        where_list = where_clause.lower()
+        where_list = split_where_clause(where_list)
+        if(where_list[2] == 'from'):
+            where_list = where_list[2:]
+            Trd_word_from = True
+            
         tbn = table_name.lower()
         index = where_list.index(tbn)
         ln = len(where_list)
@@ -477,7 +540,14 @@ def generate_delete_backup(query, case_id, table_name, count):
     stmt = f"Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)\n"
     stmt += f"(Select '{case_id}', '{table_name}','',{fk_column}, 'Deleting records','','', getdate() \n"
     if where_clause:
-        stmt += f" {where_clause}"
+        if(Trd_word_from):
+            where_list = where_clause.lower()
+            where_list = split_where_clause(where_list)
+            where_list = where_list[2:]
+            result = " ".join(where_list)
+            stmt += f" {result}"
+        else:
+            stmt += f" {where_clause}"
     stmt += "\n)"
     statements.append(stmt)
 
@@ -492,7 +562,14 @@ def generate_delete_backup(query, case_id, table_name, count):
         backup_stmt = f"select * into {backup_table}"
         
     if where_clause:
-        backup_stmt += f" {where_clause}"
+        if(Trd_word_from):
+            where_list = where_clause.lower()
+            where_list = split_where_clause(where_list)
+            where_list = where_list[2:]
+            result = " ".join(where_list)
+            backup_stmt += f" {result}"
+        else:
+            backup_stmt += f" {where_clause}"
     statements.append(backup_stmt)
 
     return statements
@@ -510,7 +587,10 @@ def extract_table_from_delete(query):
     where_match = re.search(r'\bfrom\b.*$', query, re.IGNORECASE | re.DOTALL)
     where_clause = where_match.group(0) if where_match else ''
 
-    where_clause_list = where_clause.lower().split()
+    where_clause_list = where_clause.lower()
+    where_clause_list = split_where_clause(where_clause_list)
+    if(where_clause_list[2] == 'from'):
+        where_clause_list = where_clause_list[2:]        
     tn = table_name.lower()
     if tn in where_clause_list:
         index = where_clause_list.index(tn)
