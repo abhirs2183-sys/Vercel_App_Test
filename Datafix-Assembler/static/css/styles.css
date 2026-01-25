@@ -749,6 +749,18 @@ body.light-mode {
     font-size: 0.8rem;
 }
 
+.black-text {
+    color: #000000 !important;
+}
+
+.dark-mode .made-with {
+    color: var(--text-white);
+}
+
+.light-mode .made-with {
+    color: var(--primary-navy);
+}
+
 .made-with {
     cursor: default;
 }
