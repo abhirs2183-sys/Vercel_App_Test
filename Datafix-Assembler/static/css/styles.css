@@ -753,6 +753,10 @@ body.light-mode {
     color: #000000 !important;
 }
 
+.red-text {
+    color: #ff0000 !important;
+}
+
 .dark-mode .made-with {
     color: var(--text-white);
 }
