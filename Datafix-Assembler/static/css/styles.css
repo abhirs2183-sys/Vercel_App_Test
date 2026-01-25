@@ -749,8 +749,14 @@ body.light-mode {
     font-size: 0.8rem;
 }
 
-.made-with .heart {
-    color: #e74c3c;
+.made-with {
+    cursor: default;
+}
+
+.version-info {
+    cursor: help;
+    border-bottom: 1px dotted var(--text-gray);
+    position: relative;
 }
 
 
