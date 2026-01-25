@@ -749,7 +749,11 @@ body.light-mode {
     font-size: 0.8rem;
 }
 
-.black-text {
+.dark-mode .brand-g {
+    color: #ffffff !important;
+}
+
+.light-mode .brand-g {
     color: #000000 !important;
 }
 
