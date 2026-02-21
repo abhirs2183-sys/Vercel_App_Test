@@ -283,7 +283,20 @@ def generate_output(metadata, sql_queries):
                     output_lines.append('GO')
                     output_lines.append(stmt)
                     output_lines.append('')
-
+        elif('yardi_delete_receipt' in query.lower()):
+            count_t = delete_table_counts.get('trans', 0)
+            count_d = delete_table_counts.get('detail', 0)
+            count_g = delete_table_counts.get('gldetail', 0)
+            backup_statements = generate_delete_receipt_backup(
+                query, metadata['case_id'], count_t, count_d, count_g)
+            delete_table_counts['trans'] = count_t + 1
+            delete_table_counts['detail'] = count_d + 1
+            delete_table_counts['gldetail'] = count_g + 1
+            for stmt in backup_statements:
+                output_lines.append('GO')
+                output_lines.append(stmt)
+                output_lines.append('')
+        
     output_lines.append('GO')
     query_pos = 0
     for query in sql_queries[0]:
@@ -511,7 +524,53 @@ def get_foreign_key_column(table_name):
         return 'hmyperson'
     return 'hmy'
 
+def generate_delete_receipt_backup(query, case_id, count_t, count_d, count_g):
+    statements = []
+    query = query.strip()
+    words = query.split()
+    receipt_id = words[-1]
+    
+    stmt = ''
+    stmt += f"Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)\n"
+    stmt += f"(Select '{case_id}', 'gldetail','',hmy, 'Deleting records','','', getdate() \nfrom gldetail where htran = {receipt_id}"
+    stmt += "\n)"
+    statements.append(stmt)
+    backup_stmt = ''
+    if count_g == 0:
+        backup_table = f"gldetail_{case_id}"
+    else:
+        backup_table = f"gldetail_{count_g}_{case_id}"
+    backup_stmt += f"select * into {backup_table} from gldetail where htran = {receipt_id}"
+    statements.append(backup_stmt)
 
+    stmt = ''
+    stmt += f"Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)\n"
+    stmt += f"(Select '{case_id}', 'detail','',hmy, 'Deleting records','','', getdate()  \nfrom detail where hinvorrec = {receipt_id}"
+    stmt += "\n)"
+    statements.append(stmt)
+    backup_stmt = ''
+    if count_d == 0:
+        backup_table = f"detail_{case_id}"
+    else:
+        backup_table = f"detail_{count_d}_{case_id}"
+    backup_stmt += f"select * into {backup_table} from detail where hinvorrec = {receipt_id}"
+    statements.append(backup_stmt)
+
+    stmt = ''
+    stmt += f"Insert into DatafixHistory (hycrm, sTableName, sColumnName, hForeignKey, sNotes, sNewValue, sOldValue, dtdate)\n"
+    stmt += f"(Select '{case_id}', 'trans','',hmy, 'Deleting records','','', getdate() \nfrom trans where hmy = {receipt_id}"
+    stmt += "\n)"
+    statements.append(stmt)
+    backup_stmt = ''
+    if count_t == 0:
+        backup_table = f"trans_{case_id}"
+    else:
+        backup_table = f"trans_{count_t}_{case_id}"
+    backup_stmt += f"select * into {backup_table} from trans where hmy = {receipt_id}"
+    statements.append(backup_stmt)
+
+    return statements
+    
 def generate_delete_backup(query, case_id, table_name, count):
     statements = []
     Trd_word_from = False
