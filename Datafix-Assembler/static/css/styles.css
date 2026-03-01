@@ -174,7 +174,16 @@ body.light-mode {
 }
 
 .light-mode .hero {
-    background: linear-gradient(180deg, #e8f4f8 0%, #d4e8f0 50%, var(--bg-light) 100%);
+    background: var(--bg-light);
+}
+
+.light-mode .hero-title {
+    color: var(--primary-navy);
+}
+
+.light-mode .hero-subtitle {
+    color: var(--primary-navy);
+    opacity: 0.8;
 }
 
 .hero-title {
