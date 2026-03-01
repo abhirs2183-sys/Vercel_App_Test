@@ -749,30 +749,6 @@ body.light-mode {
     font-size: 0.8rem;
 }
 
-.dark-mode .brand-g {
-    color: #ffffff !important;
-}
-
-.light-mode .brand-g {
-    color: #000000 !important;
-}
-
-.red-text {
-    color: #ff0000 !important;
-}
-
-.dark-mode .made-with {
-    color: var(--text-white);
-}
-
-.light-mode .made-with {
-    color: var(--primary-navy);
-}
-
-.made-with {
-    cursor: default;
-}
-
 .version-info {
     cursor: help;
     border-bottom: 1px dotted var(--text-gray);
