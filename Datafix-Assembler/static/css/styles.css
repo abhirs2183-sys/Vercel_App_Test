@@ -333,7 +333,7 @@ body.light-mode {
 
 .light-mode .upload-area {
     background: var(--card-light);
-    border: 2px dashed rgba(0, 212, 255, 0.4);
+    border: 2px solid #000000;
     box-shadow: 0 5px 30px rgba(0, 0, 0, 0.08);
 }
 
@@ -532,7 +532,7 @@ body.light-mode {
 
 .light-mode .feedback-card {
     background: var(--card-light);
-    border: 1px solid var(--border-light);
+    border: 2px solid #000000;
     box-shadow: 0 5px 30px rgba(0, 0, 0, 0.08);
 }
 
@@ -570,7 +570,7 @@ body.light-mode {
 .light-mode .feedback-textarea {
     background: #f8fafc;
     color: var(--primary-navy);
-    border-color: var(--border-light);
+    border: 1px solid #000000;
 }
 
 .feedback-textarea:focus {
