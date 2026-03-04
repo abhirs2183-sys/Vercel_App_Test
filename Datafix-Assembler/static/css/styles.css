@@ -276,9 +276,9 @@ body.light-mode {
 }
 
 .light-mode .badge {
-    background: #e0f7fa;
-    border: 1px solid #00acc1;
-    color: #00838f;
+    background: #e1f5fe;
+    border: 1px solid #0288d1;
+    color: #01579b;
     font-weight: 600;
 }
 
