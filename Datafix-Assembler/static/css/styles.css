@@ -304,8 +304,10 @@ body.light-mode {
 }
 
 .light-mode .section-badge {
-    background: rgba(0, 212, 255, 0.1);
-    border: 1px solid rgba(0, 212, 255, 0.3);
+    background: #e1f5fe;
+    border: 1px solid #0288d1;
+    color: #01579b;
+    font-weight: 600;
 }
 
 .section-title {
@@ -508,8 +510,10 @@ body.light-mode {
 }
 
 .light-mode .credits-badge {
-    background: rgba(255, 193, 7, 0.1);
-    border: 1px solid rgba(255, 193, 7, 0.4);
+    background: #fff8e1;
+    border: 1px solid #fbc02d;
+    color: #f57f17;
+    font-weight: 600;
 }
 
 .credits-text {
