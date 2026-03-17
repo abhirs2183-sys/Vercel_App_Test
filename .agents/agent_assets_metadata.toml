@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "ZQd8ezHqGScK_c_1mVv50"
+uri = "file://yDatafix.zip"
+type = "unspecified"
+title = "yDatafix Project (ZIP)"
