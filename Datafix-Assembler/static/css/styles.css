@@ -219,6 +219,10 @@ body.light-mode {
     position: relative;
 }
 
+.rotating-icon {
+    color: #e67e22;
+}
+
 #rotating-word.slide-out {
     animation: slideOut 0.4s ease forwards;
 }

@@ -132,10 +132,10 @@ function initRotatingWord() {
     if (!el) return;
 
     const words = [
-        { text: 'Maker',     icon: 'fa-cog' },
-        { text: 'Builder',   icon: 'fa-hammer' },
-        { text: 'Creator',   icon: 'fa-magic' },
-        { text: 'Generator', icon: 'fa-bolt' }
+        { text: 'Maker',     icon: 'fa-cog',     color: '#e67e22' },
+        { text: 'Builder',   icon: 'fa-hammer',  color: '#e74c3c' },
+        { text: 'Creator',   icon: 'fa-magic',   color: '#9b59b6' },
+        { text: 'Generator', icon: 'fa-bolt',    color: '#f1c40f' }
     ];
 
     let current = 0;
@@ -145,7 +145,8 @@ function initRotatingWord() {
 
         setTimeout(() => {
             current = (current + 1) % words.length;
-            el.innerHTML = `<i class="fas ${words[current].icon}"></i> ${words[current].text}`;
+            const w = words[current];
+            el.innerHTML = `${w.text} <i class="fas ${w.icon} rotating-icon" style="color:${w.color}"></i>`;
             el.classList.remove('slide-out');
             el.classList.add('slide-in');
 
