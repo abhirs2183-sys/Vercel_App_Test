@@ -132,10 +132,10 @@ function initRotatingWord() {
     if (!el) return;
 
     const words = [
-        { text: 'Maker',     icon: 'fa-cog',     color: '#e67e22' },
-        { text: 'Builder',   icon: 'fa-hammer',  color: '#e74c3c' },
-        { text: 'Creator',   icon: 'fa-magic',   color: '#9b59b6' },
-        { text: 'Generator', icon: 'fa-bolt',    color: '#f1c40f' }
+        { text: 'Maker',     icon: 'fa-cog',     color: '#ffc107' },
+        { text: 'Builder',   icon: 'fa-hammer',  color: '#ffc107' },
+        { text: 'Creator',   icon: 'fa-magic',   color: '#ffc107' },
+        { text: 'Generator', icon: 'fa-bolt',    color: '#ffc107' }
     ];
 
     let current = 0;
