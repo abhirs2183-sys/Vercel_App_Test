@@ -126,7 +126,38 @@ function initTypingAnimation() {
     type();
 }
 
+// Rotating word animation
+function initRotatingWord() {
+    const el = document.getElementById('rotating-word');
+    if (!el) return;
+
+    const words = [
+        { text: 'Maker',     icon: 'fa-cog' },
+        { text: 'Builder',   icon: 'fa-hammer' },
+        { text: 'Creator',   icon: 'fa-magic' },
+        { text: 'Generator', icon: 'fa-bolt' }
+    ];
+
+    let current = 0;
+
+    setInterval(() => {
+        el.classList.add('slide-out');
+
+        setTimeout(() => {
+            current = (current + 1) % words.length;
+            el.innerHTML = `<i class="fas ${words[current].icon}"></i> ${words[current].text}`;
+            el.classList.remove('slide-out');
+            el.classList.add('slide-in');
+
+            setTimeout(() => {
+                el.classList.remove('slide-in');
+            }, 400);
+        }, 400);
+    }, 2500);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    initRotatingWord();
     // initTypingAnimation(); // Removed for static text
     // createSnowflakes(); // Removed for new year
     const themeToggle = document.getElementById('themeToggle');
