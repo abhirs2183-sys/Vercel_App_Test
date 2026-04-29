@@ -274,54 +274,6 @@ def generate_output(metadata, sql_queries):
     for query in sql_queries[0]:
         query_type = get_query_type(query)
 
-        if query_type == "UPDATE":
-            backup_statements = generate_update_backup(query, metadata["case_id"])
-            for stmt in backup_statements:
-                output_lines.append("GO")
-                output_lines.append(stmt)
-                output_lines.append("")
-        elif query_type == "DELETE":
-            table_name = extract_table_from_delete(query)
-            if table_name:
-                count = delete_table_counts.get(table_name.lower(), 0)
-                backup_statements = generate_delete_backup(
-                    query, metadata["case_id"], table_name, count
-                )
-                delete_table_counts[table_name.lower()] = count + 1
-                for stmt in backup_statements:
-                    output_lines.append("GO")
-                    output_lines.append(stmt)
-                    output_lines.append("")
-        elif "yardi_delete_receipt" in query.lower():
-            count_t = delete_table_counts.get("trans", 0)
-            count_d = delete_table_counts.get("detail", 0)
-            count_g = delete_table_counts.get("gldetail", 0)
-            backup_statements = generate_delete_receipt_backup(
-                query, metadata["case_id"], count_t, count_d, count_g
-            )
-            delete_table_counts["trans"] = count_t + 1
-            delete_table_counts["detail"] = count_d + 1
-            delete_table_counts["gldetail"] = count_g + 1
-            for stmt in backup_statements:
-                output_lines.append("GO")
-                output_lines.append(stmt)
-                output_lines.append("")
-
-    output_lines.append("GO")
-    query_pos = 0
-    for query in sql_queries[0]:
-        while query_pos in sql_queries[1]:
-            output_lines.append("")
-            query_pos += 1
-
-        output_lines.append(query)
-        query_pos += 1
-
-    output_lines.append("Go")
-    output_lines.append("//End SQL")
-
-    return "\n".join(output_lines)
-
 
 def get_query_type(query):
     return "UNKNOWN"
