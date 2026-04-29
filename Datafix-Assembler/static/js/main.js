@@ -126,39 +126,7 @@ function initTypingAnimation() {
     type();
 }
 
-// Rotating word animation
-function initRotatingWord() {
-    const el = document.getElementById('rotating-word');
-    if (!el) return;
-
-    const words = [
-        { text: 'Maker',     icon: 'fa-cog',     color: '#ffc107' },
-        { text: 'Builder',   icon: 'fa-hammer',  color: '#ffc107' },
-        { text: 'Creator',   icon: 'fa-magic',   color: '#ffc107' },
-        { text: 'Generator', icon: 'fa-bolt',    color: '#ffc107' }
-    ];
-
-    let current = 0;
-
-    setInterval(() => {
-        el.classList.add('slide-out');
-
-        setTimeout(() => {
-            current = (current + 1) % words.length;
-            const w = words[current];
-            el.innerHTML = `${w.text} <i class="fas ${w.icon} rotating-icon" style="color:${w.color}"></i>`;
-            el.classList.remove('slide-out');
-            el.classList.add('slide-in');
-
-            setTimeout(() => {
-                el.classList.remove('slide-in');
-            }, 400);
-        }, 400);
-    }, 2500);
-}
-
 document.addEventListener('DOMContentLoaded', function() {
-    initRotatingWord();
     // initTypingAnimation(); // Removed for static text
     // createSnowflakes(); // Removed for new year
     const themeToggle = document.getElementById('themeToggle');

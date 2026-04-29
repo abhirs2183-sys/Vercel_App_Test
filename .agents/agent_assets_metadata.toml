@@ -1,8 +1,0 @@
-uploads = []
-generated = []
-
-[[outputs]]
-id = "aa0F3SLggxAS9ETEMV0QN"
-uri = "file://Datafix-Assembler/requirements.txt"
-type = "text"
-title = "requirements.txt"
